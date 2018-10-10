@@ -35,7 +35,7 @@ def Graham (l):
 		"""Funcao para ordenar os pontos ao redor de z
 
 		Usada com a funcao sort, ordena os pontos de uma lista
-		de acordo com o angulo que cada ponto forma com o ponto 
+		de acordo com o angulo que cada ponto forma com o ponto
 		z e a reta horizontal. Em caso de empate, o ponto mais
 		distante aparece primeiro."""
 		area = area2 (z, x, y)
@@ -93,9 +93,9 @@ def Graham (l):
 		pilha.append (l[i])
 
 		l[i].unhilight ()
-		
+
 	pilha[-1].lineto (pilha[0])
-	
+
 
 	for i in range (0, len(pilha)-1):
 		pilha[i].remove_lineto (pilha[i+1])
