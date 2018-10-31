@@ -12,9 +12,9 @@ from . import fortune
 
 # cada entrada deve ter:
 #  [ 'nome-do-modulo', 'nome-da-funcao', 'nome do algoritmo' ]
-children = (
-	( 'fortune', 'Fortune', 'Fortune' )
-)
+children = [
+	[ 'fortune', 'Fortune', 'Fortune' ]
+]
 
 #children = algorithms
 

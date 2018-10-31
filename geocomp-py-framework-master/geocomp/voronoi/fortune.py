@@ -4,9 +4,9 @@
 # from geocomp.common.polygon import Polygon
 # from geocomp.common import control
 # from geocomp.common.guiprim import *
-from point import Point
 from queue import PriorityQueue
-from DCEL  import DCEL
+from geocomp.voronoi.point import Point
+from geocomp.voronoi.DCEL  import DCEL
 
 def fila_de_eventos(P, n):
 	Q = PriorityQueue()
@@ -29,10 +29,10 @@ def Fortune(P, n):
 	# finalize_voronoi(V, T)
 	return V
 
-if __name__=='__main__':
-	P = [Point(x, x*(-1)**(x), evento_ponto=True) for x in range(10)]
-	print(P)
-	Fortune(P, len(P))
+if __name__== '__main__':
+    P = [Point(x, x*(-1)**(x), evento_ponto=True) for x in range(10)]
+    print(P)
+    Fortune(P, len(P))
 # def vertices_tangentes (Q, p):
 # 	"""retorna os dois vertices de tangencia de Q em relacao a p
 #

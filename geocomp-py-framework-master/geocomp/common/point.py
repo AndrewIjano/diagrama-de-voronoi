@@ -18,14 +18,14 @@ class Point:
 		return '( ' + repr(self.x) + ' ' + repr(self.y) + ' )'
 
 	############ ANDREW E EDUARDO ADICIONARAM ###############
-	def __eq__(self, other):
-		return self.y == other.y
-
-	def __lt__(self, other):
-		return self.y < other.y
-
-	def __gt__(self, other):
-		return self.y > other.y
+	# def __eq__(self, other):
+	# 	return self.y == other.y
+	#
+	# def __lt__(self, other):
+	# 	return self.y < other.y
+	#
+	# def __gt__(self, other):
+	# 	return self.y > other.y
 	######################### FIM ##########################
 	def plot (self, color=config.COLOR_POINT):
 		"Desenha o ponto na cor especificada"

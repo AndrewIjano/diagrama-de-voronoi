@@ -16,7 +16,7 @@ def get_func (strTemp):
 	last = listTemp.pop ()
 	ext = last.rfind ('.py', -4)
 	#ext = rfind (last, '.py', -4)
-	if ext != -1: 
+	if ext != -1:
 		last = last[:ext]
 
 	mod = geocomp
@@ -29,7 +29,6 @@ def get_func (strTemp):
 
 	mod = getattr (mod, last)
 	func = getattr (mod, tempTuple[1])
-
 	return func
 
 def run_alg (func, localInput):
@@ -77,8 +76,6 @@ if __name__ == '__main__':
 		sys.argv.pop (0)
 		sys.argv.pop (0)
 		many_algs (sys.argv)
-	else: 
+	else:
 		sys.argv.pop (0)
 		many_files (sys.argv)
-
-
