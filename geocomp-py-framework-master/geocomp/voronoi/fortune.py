@@ -7,32 +7,39 @@
 from queue import PriorityQueue
 from geocomp.voronoi.point import Point
 from geocomp.voronoi.DCEL  import DCEL
+from geocomp.voronoi.BST   import BST
 
-def fila_de_eventos(P, n):
+def fila_de_eventos(P):
 	Q = PriorityQueue()
 	for p in P:
 		Q.put(p)
 	return Q
 
-def Fortune(P, n):
-	Q = fila_de_eventos(P, n)
+def Fortune(P):
+	Q = fila_de_eventos(P)
 	V = DCEL()
-
+	T = BST()
 	while not Q.empty():
 		q = Q.get()
 		if q.evento_ponto:
 			print(q, 'evento ponto')
-			# trata_evento_ponto(q, T, Q, V)
+			trata_evento_ponto(q, T, Q, V)
 		else:
 			print(q, 'evento circulo')
 			# trata_evento_circulo(q, T, Q, V)
 	# finalize_voronoi(V, T)
 	return V
 
+def trata_evento_ponto(q, T, Q, V):
+	if T.is_empty():
+		T.put(q)
+		f = T.get(q)
+		print(f)
+
 if __name__== '__main__':
     P = [Point(x, x*(-1)**(x), evento_ponto=True) for x in range(10)]
     print(P)
-    Fortune(P, len(P))
+    Fortune(P)
 # def vertices_tangentes (Q, p):
 # 	"""retorna os dois vertices de tangencia de Q em relacao a p
 #

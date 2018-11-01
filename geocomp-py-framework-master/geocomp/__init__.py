@@ -23,7 +23,7 @@ from .common.prim import reset_count
 children = (
 	( 'convexhull', None, 'Fecho Convexo' ),
 	( 'farthest',  None, 'Par Mais Distante' ),
-	( 'voronoi', None, 'Diagrama de Vornoi')
+	( 'voronoi', None, 'Diagrama de Voronoi')
 	)
 
 __all__ = [p[0] for p in children]
