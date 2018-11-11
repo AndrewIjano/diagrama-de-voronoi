@@ -2,17 +2,38 @@
 """Algoritmo de Fortune"""
 
 # from geocomp.common.polygon import Polygon
-# from geocomp.common import control
-# from geocomp.common.guiprim import *
+from geocomp.common import control
+from geocomp.common.guiprim import *
 from queue import PriorityQueue
 from heapq import heappush, heappop, heapify
 from geocomp.common.point import Point
-from geocomp.voronoi.DCEL  import DCEL
-from geocomp.voronoi.BST   import BST
-from geocomp.voronoi.circumcircle  import circumcenter, distance
+from geocomp.common.segment import Segment
+from geocomp.voronoi.DCEL import DCEL
+from geocomp.voronoi.BST import BST
+from geocomp.voronoi.circumcircle import circumcenter, distance
+
+class Event():
+	def __init__(self, point, is_site_event, leaf=None):
+		self.point = point
+		self.is_site_event = is_site_event
+		self.leaf = leaf
+
+	def __repr__(self):
+		return repr(self.point)
+
+	def __eq__(self, other):
+		return self.point.y == other.point.y
+
+	def __lt__(self, other):
+		return self.point.y > other.point.y
+
+	def __gt__(self, other):
+		return self.point.y < other.point.y
 
 def event_queue(P):
-	Q = P[:]
+	Q = [Event(p, True) for p in P]
+	for p in P:
+		p.plot(color='red')
 	heapify(Q)
 	return Q
 
@@ -20,35 +41,56 @@ def Fortune(P):
 	Q = event_queue(P)
 	V = DCEL()
 	T = BST()
+	id = None
 	while Q:
+		control.freeze_update()
+
 		q = heappop(Q)
-		if q.site_event:
+		q.point.hilight()
+		sweep = Segment(Point(-10000, q.point.y), Point(10000, q.point.y))
+		sweep.plot(cor='green')
+
+
+		if q.is_site_event:
 			print(q, 'evento ponto')
-			trata_evento_ponto(q, T, Q, V)
+			handle_site_event(q.point, T, Q, V)
 		else:
 			print(q, 'evento circulo')
+			handle_circle_event(q, T, Q, V)
+			q.point.unplot()
+			# trata_evento_circulo(q, T, Q, V)
 		# print('T:', T)
 		print()
-			# trata_evento_circulo(q, T, Q, V)
+		id = sweep
+		control.sleep()
+		control.thaw_update()
+		control.update()
+		sweep.hide()
+		q.point.unhilight()
+
 	# finalize_voronoi(V, T)
 	print('fim do Voronoi')
 	return V
 
-def trata_evento_ponto(q, T, Q, V):
+def handle_site_event(q, T, Q, V):
 	if T.is_empty():
 		T.insert(q)
 	else:
 		f = T.search(q)
 		if f.event is not None:
+			f.event.point.unplot()
 			Q.remove(f.event)
 
+
 		u, f, v = T.split_and_insert(f, q)
-		# print('>>Bigger:',T.search_bigger(q))
-		# print('>>Smaller:',T.search_smaller(q))
 		l = T.all_leaves()
 		print(l)
 		update_events(Q, T, f, q)
 		# print('f:', f)
+
+def handle_circle_event(q, T, Q, V):
+	f = q.leaf
+
 
 def update_events(Q, T, f, q):
 	leaves = T.all_leaves()
@@ -57,19 +99,24 @@ def update_events(Q, T, f, q):
 		center = circumcenter(f.point, leaves[i - 1].point, leaves[i - 2].point)
 		radius = distance(center, f.point)
 		if center.y - radius < q.y:
-			heappush(Q, Point(center.x, center.y - radius, site_event=False))
+			point = Point(center.x, center.y - radius)
+			point.plot(color='cyan')
+			heappush(Q, Event(point, False, f))
 
 	if len(leaves) - i > 2:
 		center = circumcenter(f.point, leaves[i + 1].point, leaves[i + 2].point)
 		radius = distance(center, f.point)
 		if center.y - radius < q.y:
-			heappush(Q, Point(center.x, center.y - radius, site_event=False))
+			point = Point(center.x, center.y - radius)
+			point.plot(color='cyan')
+			heappush(Q, Event(point, False, f))
 
 
 if __name__== '__main__':
     P = [Point(x, x*(-1)**(x)) for x in range(10)]
     print(P)
     Fortune(P)
+
 # def vertices_tangentes (Q, p):
 # 	"""retorna os dois vertices de tangencia de Q em relacao a p
 #

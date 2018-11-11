@@ -67,6 +67,15 @@ class BST():
         self.root = insert_tree(self.root, new_tree, point)
         return new_tree, new_leaf, new_node
 
+    def delete_min(self):
+        """Remove a menor folha da árvore"""
+        def inner_delete_min(node):
+            if isinstance(node.left, Leaf):
+                return node.right
+            node.left = delete_min(node.left)
+            return node
+        self.root = delete_min(self.root)
+
     def all_leaves(self):
         """Retorna todas as folhas da árvore em ordem crescente"""
         def inner_all_leaves(node):

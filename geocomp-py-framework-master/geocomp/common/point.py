@@ -6,28 +6,12 @@ from geocomp import config
 class Point:
 	"Um ponto representado por suas coordenadas cartesianas"
 
-	############ ANDREW E EDUARDO ADICIONARAM ###############
-	def __init__ (self, x, y, site_event=True, z=None):
+	def __init__ (self, x, y, z=None):
 		"Para criar um ponto, passe suas coordenadas."
 		self.x = x
 		self.y = y
 		self.z = z
-		self.site_event = site_event
 		self.lineto_id = {}
-
-	def __repr__ (self):
-		"Retorna uma string da forma '(x,y)'"
-		return 'P:({:1.3f},{:1.3f})'.format(self.x, self.y)
-
-	def __eq__(self, other):
-		return self.y == other.y
-
-	def __lt__(self, other):
-		return self.y > other.y
-
-	def __gt__(self, other):
-		return self.y < other.y
-
 	######################### FIM ##########################
 	def plot (self, color=config.COLOR_POINT):
 		"Desenha o ponto na cor especificada"

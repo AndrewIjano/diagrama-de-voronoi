@@ -11,7 +11,7 @@ def Brute (l):
 	"Algoritmo forca bruta para encontrar o par de pontos mais distante"
 
 	if len (l) < 2: return None
-	
+
 	farthest = 0
 	a = b = None
 	id = None
@@ -34,8 +34,7 @@ def Brute (l):
 				id = a.lineto (b)
 				control.thaw_update ()
 				control.update ()
-	
+
 	ret = Segment (a, b)
 	ret.extra_info = 'distancia: %.2f'%math.sqrt (dist2 (a, b))
 	return ret
-
