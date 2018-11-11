@@ -7,11 +7,17 @@ class Node():
         self.p_j = right_point
         right = left = hedge = None
 
+    def __repr__(self):
+        return f'<Node: {self.p_i}, {self.p_j}>'
+
 class Leaf():
     """Implementa uma folha"""
     def __init__(self, point):
         self.point = point
         self.event = None
+
+    def __repr__(self):
+        return f'<Leaf: {self.point}>'
 
 class BST():
     """Implementa uma árvore de busca balanceada"""
@@ -59,7 +65,25 @@ class BST():
             return node
 
         self.root = insert_tree(self.root, new_tree, point)
-        return new_tree, new_node, new_leaf
+        return new_tree, new_leaf, new_node
+
+    def all_leaves(self):
+        """Retorna todas as folhas da árvore em ordem crescente"""
+        def inner_all_leaves(node):
+            if isinstance(node, Leaf):
+                return [node]
+            leaves = []
+            leaves += inner_all_leaves(node.left)
+            leaves += inner_all_leaves(node.right)
+            return leaves
+        return inner_all_leaves(self.root)
+
+    def __str__(self):
+        def inner_print(node):
+            if isinstance(node, Leaf):
+                return node
+            return f'{node} {inner_print(node.left)} {inner_print(node.right)}'
+        return f'<BST: {inner_print(self.root)}>'
 
 def get_x_breakpoint(node, line_y):
     """ Calcula a coordenada x do breakpoint dado a tupla de pontos

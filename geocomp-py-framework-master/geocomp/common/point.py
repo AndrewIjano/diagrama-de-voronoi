@@ -7,17 +7,17 @@ class Point:
 	"Um ponto representado por suas coordenadas cartesianas"
 
 	############ ANDREW E EDUARDO ADICIONARAM ###############
-	def __init__ (self, x, y, evento_ponto=True, z=None):
+	def __init__ (self, x, y, site_event=True, z=None):
 		"Para criar um ponto, passe suas coordenadas."
 		self.x = x
 		self.y = y
 		self.z = z
-		self.evento_ponto = evento_ponto
+		self.site_event = site_event
 		self.lineto_id = {}
 
 	def __repr__ (self):
-		"Retorna uma string da forma '( x y )'"
-		return '( ' + repr(self.x) + ' ' + repr(self.y) + ' )'
+		"Retorna uma string da forma '(x,y)'"
+		return 'P:({:1.3f},{:1.3f})'.format(self.x, self.y)
 
 	def __eq__(self, other):
 		return self.y == other.y

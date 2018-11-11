@@ -9,6 +9,7 @@ from heapq import heappush, heappop, heapify
 from geocomp.common.point import Point
 from geocomp.voronoi.DCEL  import DCEL
 from geocomp.voronoi.BST   import BST
+from geocomp.voronoi.circumcircle  import circumcenter, distance
 
 def event_queue(P):
 	Q = P[:]
@@ -21,12 +22,13 @@ def Fortune(P):
 	T = BST()
 	while Q:
 		q = heappop(Q)
-		if q.evento_ponto:
+		if q.site_event:
 			print(q, 'evento ponto')
 			trata_evento_ponto(q, T, Q, V)
 		else:
 			print(q, 'evento circulo')
-		print('T:', T)
+		# print('T:', T)
+		print()
 			# trata_evento_circulo(q, T, Q, V)
 	# finalize_voronoi(V, T)
 	print('fim do Voronoi')
@@ -41,11 +43,28 @@ def trata_evento_ponto(q, T, Q, V):
 			Q.remove(f.event)
 
 		u, f, v = T.split_and_insert(f, q)
-		update_events(Q, T, f)
-		print('f:', f)
+		# print('>>Bigger:',T.search_bigger(q))
+		# print('>>Smaller:',T.search_smaller(q))
+		l = T.all_leaves()
+		print(l)
+		update_events(Q, T, f, q)
+		# print('f:', f)
 
-def update_events(Q, T, f):
-	pass
+def update_events(Q, T, f, q):
+	leaves = T.all_leaves()
+	i = leaves.index(f)
+	if i > 1:
+		center = circumcenter(f.point, leaves[i - 1].point, leaves[i - 2].point)
+		radius = distance(center, f.point)
+		if center.y - radius < q.y:
+			heappush(Q, Point(center.x, center.y - radius, site_event=False))
+
+	if len(leaves) - i > 2:
+		center = circumcenter(f.point, leaves[i + 1].point, leaves[i + 2].point)
+		radius = distance(center, f.point)
+		if center.y - radius < q.y:
+			heappush(Q, Point(center.x, center.y - radius, site_event=False))
+
 
 if __name__== '__main__':
     P = [Point(x, x*(-1)**(x)) for x in range(10)]

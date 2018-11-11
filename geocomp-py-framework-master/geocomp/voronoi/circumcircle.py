@@ -7,10 +7,13 @@ def mid_point(p1, p2):
 
 def get_line(p1, p2):
     """Encontra a reta que corta dois pontos"""
-    slope = (p2.y - p1.y)/(p2.x - p1.x)
-    y_int = p1.y - slope * p1.x
-    return (slope, y_int)
-
+    try:
+        slope = (p2.y - p1.y)/(p2.x - p1.x)
+        y_int = p1.y - slope * p1.x
+        return (slope, y_int)
+    except:
+        print('error:', p1, p2)
+        return 0
 def perp_slope(line):
     """Encontra o coeficiente angula da reta perpedicular"""
     return -1 / line[0]
