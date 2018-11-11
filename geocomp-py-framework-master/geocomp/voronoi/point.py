@@ -6,7 +6,8 @@
 class Point:
 	"Um ponto representado por suas coordenadas cartesianas"
 
-	def __init__ (self, x, y, evento_ponto=False, z=None):
+	############ ANDREW E EDUARDO ADICIONARAM ###############
+	def __init__ (self, x, y, evento_ponto=True, z=None):
 		"Para criar um ponto, passe suas coordenadas."
 		self.x = x
 		self.y = y
@@ -18,7 +19,6 @@ class Point:
 		"Retorna uma string da forma '( x y )'"
 		return '( ' + repr(self.x) + ' ' + repr(self.y) + ' )'
 
-	############ ANDREW E EDUARDO ADICIONARAM ###############
 	def __eq__(self, other):
 		return self.y == other.y
 

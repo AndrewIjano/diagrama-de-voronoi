@@ -1,43 +1,54 @@
 #!/usr/bin/env python
-"Algoritmo de Fortune"
+"""Algoritmo de Fortune"""
 
 # from geocomp.common.polygon import Polygon
 # from geocomp.common import control
 # from geocomp.common.guiprim import *
 from queue import PriorityQueue
-from geocomp.voronoi.point import Point
+from heapq import heappush, heappop, heapify
+from geocomp.common.point import Point
 from geocomp.voronoi.DCEL  import DCEL
 from geocomp.voronoi.BST   import BST
 
-def fila_de_eventos(P):
-	Q = PriorityQueue()
-	for p in P:
-		Q.put(p)
+def event_queue(P):
+	Q = P[:]
+	heapify(Q)
 	return Q
 
 def Fortune(P):
-	Q = fila_de_eventos(P)
+	Q = event_queue(P)
 	V = DCEL()
 	T = BST()
-	while not Q.empty():
-		q = Q.get()
+	while Q:
+		q = heappop(Q)
 		if q.evento_ponto:
 			print(q, 'evento ponto')
 			trata_evento_ponto(q, T, Q, V)
 		else:
 			print(q, 'evento circulo')
+		print('T:', T)
 			# trata_evento_circulo(q, T, Q, V)
 	# finalize_voronoi(V, T)
+	print('fim do Voronoi')
 	return V
 
 def trata_evento_ponto(q, T, Q, V):
 	if T.is_empty():
-		T.put(q)
-		f = T.get(q)
-		print(f)
+		T.insert(q)
+	else:
+		f = T.search(q)
+		if f.event is not None:
+			Q.remove(f.event)
+
+		u, f, v = T.split_and_insert(f, q)
+		update_events(Q, T, f)
+		print('f:', f)
+
+def update_events(Q, T, f):
+	pass
 
 if __name__== '__main__':
-    P = [Point(x, x*(-1)**(x), evento_ponto=True) for x in range(10)]
+    P = [Point(x, x*(-1)**(x)) for x in range(10)]
     print(P)
     Fortune(P)
 # def vertices_tangentes (Q, p):
