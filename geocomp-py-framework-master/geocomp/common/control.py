@@ -41,7 +41,7 @@ def update ():
 # hmm.. acho que eu nao uso as duas proximas funcoes em nenhum lugar...
 def freeze_sleep ():
 	"""Nao permite que o programa durma entre os passos do algoritmo
-	
+
 	Veja thaw_sleep"""
 	global dont_sleep
 	dont_sleep = dont_sleep + 1
@@ -58,7 +58,7 @@ def thaw_sleep ():
 def sleep (amount = None):
 	"Dorme uma pequena quantia de tempo para que o algoritmo pareca mais lento"
 	if skip: return
-	# para ajudar a debuggar, se um argumento foi passado, 
+	# para ajudar a debuggar, se um argumento foi passado,
 	# dormimos a qtde de tempo especificada
 	if amount != None:
 		time.sleep (amount)
@@ -70,6 +70,13 @@ def plot_disc (x, y, color, r):
 	"""desenha um disco de centro (x,y), raio r e cor color na tela"""
 	if skip: return 0
 	plot_id = gui.plot_disc (x, y, color, r)
+	update ()
+	return plot_id
+
+def plot_circle (x, y, color, r):
+	"""desenha um circulo de centro (x,y), raio r e cor color na tela"""
+	if skip: return 0
+	plot_id = gui.plot_circle (x, y, color, r)
 	update ()
 	return plot_id
 

@@ -52,10 +52,10 @@ def Fortune(P):
 
 
 		if q.is_site_event:
-			print(q, 'evento ponto')
+			print(f'({q.point.x}, {q.point.y})', 'evento ponto')
 			handle_site_event(q.point, T, Q, V)
 		else:
-			print(q, 'evento circulo')
+			print(f'({q.point.x}, {q.point.y})', 'evento circulo')
 			handle_circle_event(q, T, Q, V)
 			q.point.unplot()
 			# trata_evento_circulo(q, T, Q, V)
@@ -84,7 +84,7 @@ def handle_site_event(q, T, Q, V):
 
 		u, f, v = T.split_and_insert(f, q)
 		l = T.all_leaves()
-		print(l)
+		# print(l)
 		update_events(Q, T, f, q)
 		# print('f:', f)
 
@@ -96,21 +96,37 @@ def update_events(Q, T, f, q):
 	leaves = T.all_leaves()
 	i = leaves.index(f)
 	if i > 1:
-		center = circumcenter(f.point, leaves[i - 1].point, leaves[i - 2].point)
-		radius = distance(center, f.point)
+		p1 = f.point
+		p2 = leaves[i - 1].point
+		p3 = leaves[i - 2].point
+		p2.hilight('yellow'), p3.hilight('yellow')
+
+		center = circumcenter(p1, p2, p3)
+		radius = distance(center, p1)
+		id = control.plot_circle (center.x, center.y, 'red', radius)
 		if center.y - radius < q.y:
 			point = Point(center.x, center.y - radius)
 			point.plot(color='cyan')
 			heappush(Q, Event(point, False, f))
-
+		control.sleep()
+		p2.unhilight(), p3.unhilight()
+		control.plot_delete(id)
 	if len(leaves) - i > 2:
-		center = circumcenter(f.point, leaves[i + 1].point, leaves[i + 2].point)
-		radius = distance(center, f.point)
+		p1 = f.point
+		p2 = leaves[i + 1].point
+		p3 = leaves[i + 2].point
+		p2.hilight('yellow'), p3.hilight('yellow')
+
+		center = circumcenter(p1, p2, p3)
+		radius = distance(center, p1)
+		id = control.plot_circle (center.x, center.y, 'red', radius)
 		if center.y - radius < q.y:
 			point = Point(center.x, center.y - radius)
 			point.plot(color='cyan')
 			heappush(Q, Event(point, False, f))
-
+		control.sleep()
+		p2.unhilight(), p3.unhilight()
+		control.plot_delete(id)
 
 if __name__== '__main__':
     P = [Point(x, x*(-1)**(x)) for x in range(10)]

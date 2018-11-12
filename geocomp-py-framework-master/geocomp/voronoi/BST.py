@@ -51,6 +51,8 @@ class BST():
         new_node = Node(point, leaf.point)
         new_leaf = Leaf(point)
 
+        print('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA', Leaf(leaf.point) == leaf)
+
         new_tree.left, new_tree.right = Leaf(leaf.point), new_node
         new_node.left, new_node.right = new_leaf, Leaf(leaf.point)
 
@@ -75,6 +77,8 @@ class BST():
             node.left = delete_min(node.left)
             return node
         self.root = delete_min(self.root)
+
+    # def delete()
 
     def all_leaves(self):
         """Retorna todas as folhas da árvore em ordem crescente"""

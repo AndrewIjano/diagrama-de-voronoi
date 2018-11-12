@@ -28,25 +28,31 @@ def sleep ():
 
 
 def plot_disc (x, y, color, r):
-	plot_id = canvas.create_oval (canvas.r2cx(x)-r, canvas.r2cy(y)-r, 
+	plot_id = canvas.create_oval (canvas.r2cx(x)-r, canvas.r2cy(y)-r,
 					canvas.r2cx(x)+r, canvas.r2cy(y)+r, fill=color)
 	return plot_id
 
+
+def plot_circle (x, y, color, r):
+	plot_id = canvas.create_oval (canvas.r2cx(x-r), canvas.r2cy(y-r),
+					canvas.r2cx(x+r), canvas.r2cy(y+r), outline=color)
+	return plot_id
+
 def plot_line (x0, y0, x1, y1, color, linewidth):
-	lineto_id = canvas.create_line (canvas.r2cx(x0), canvas.r2cy(y0), 
-					   canvas.r2cx(x1), canvas.r2cy(y1), 
+	lineto_id = canvas.create_line (canvas.r2cx(x0), canvas.r2cy(y0),
+					   canvas.r2cx(x1), canvas.r2cy(y1),
 					   fill=color, width=linewidth)
 	return lineto_id
 
 def plot_vert_line (x, color, linewidth):
-	lineto_id = canvas.create_line (canvas.r2cx(x), 0, 
-					   canvas.r2cx(x), int (canvas['height']), 
+	lineto_id = canvas.create_line (canvas.r2cx(x), 0,
+					   canvas.r2cx(x), int (canvas['height']),
 					   fill=color, width=linewidth)
 	return lineto_id
 
 def plot_horiz_line (y, color, linewidth):
-	lineto_id = canvas.create_line (0, canvas.r2cy(y), 
-					   int (canvas['width']), canvas.r2cy(y), 
+	lineto_id = canvas.create_line (0, canvas.r2cy(y),
+					   int (canvas['width']), canvas.r2cy(y),
 					   fill=color, width=linewidth)
 	return lineto_id
 
@@ -92,10 +98,9 @@ def config_canvas (minx, maxx, miny, maxy):
 
 	#print canvas['width'], canvas['height'], canvas['confine']
 	#print canvas.winfo_width (), canvas.winfo_height ()
-	
+
 	canvas.r2cx = rx
 	canvas.r2cy = ry
 
 def hide_algorithm ():
 	return master.show_var.get () != 0
-

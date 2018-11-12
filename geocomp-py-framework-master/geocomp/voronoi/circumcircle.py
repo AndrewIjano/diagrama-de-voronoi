@@ -1,5 +1,10 @@
 import math
 from geocomp.common.point import Point
+import numpy as np
+
+from geocomp.common import control
+from geocomp.common.guiprim import *
+from geocomp.common.segment import Segment
 
 def mid_point(p1, p2):
     """Encontra o ponto médio entre dois pontos"""
@@ -7,13 +12,10 @@ def mid_point(p1, p2):
 
 def get_line(p1, p2):
     """Encontra a reta que corta dois pontos"""
-    try:
-        slope = (p2.y - p1.y)/(p2.x - p1.x)
-        y_int = p1.y - slope * p1.x
-        return (slope, y_int)
-    except:
-        print('error:', p1, p2)
-        return 0
+    slope = (p2.y - p1.y)/(p2.x - p1.x)
+    y_int = p1.y - slope * p1.x
+    return (slope, y_int)
+
 def perp_slope(line):
     """Encontra o coeficiente angula da reta perpedicular"""
     return -1 / line[0]
@@ -25,7 +27,7 @@ def get_line_from_slope(slope, point):
 def intersection(line1, line2):
     """Encontra o ponto de interseção de duas retas"""
     x = (line2[1] - line1[1])/(line1[0] - line2[0])
-    y = line1[0] * x + line2[1]
+    y = line1[0] * x + line1[1]
     return Point(x, y)
 
 def distance(p1, p2):
@@ -46,4 +48,23 @@ def circumcenter(p1, p2, p3):
     bissect1 = get_line_from_slope(perp1, mid1)
     bissect2 = get_line_from_slope(perp2, mid2)
 
-    return intersection(bissect1, bissect2)
+    f1 = lambda x : bissect1[0] * x + bissect1[1]
+    f2 = lambda x : bissect2[0] * x + bissect2[1]
+
+    p1, p2 = Point(-100, f1(-100)), Point(100, f1(100))
+    p1.lineto(p2)
+
+    p3, p4 = Point(-100, f2(-100)), Point(100, f2(100))
+    p3.lineto(p4)
+
+    inter = intersection(bissect1, bissect2)
+
+    inter.plot()
+    control.sleep()
+    control.thaw_update()
+    control.update()
+
+    p1.remove_lineto(p2)
+    p3.remove_lineto(p4)
+    inter.unplot()
+    return inter
