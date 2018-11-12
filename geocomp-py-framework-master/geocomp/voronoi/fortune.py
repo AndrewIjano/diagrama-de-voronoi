@@ -59,7 +59,7 @@ def Fortune(P):
 			handle_circle_event(q, T, Q, V)
 			q.point.unplot()
 			# trata_evento_circulo(q, T, Q, V)
-		# print('T:', T)
+		print('T:', T)
 		print()
 		id = sweep
 		control.sleep()
@@ -111,6 +111,7 @@ def update_events(Q, T, f, q):
 		control.sleep()
 		p2.unhilight(), p3.unhilight()
 		control.plot_delete(id)
+
 	if len(leaves) - i > 2:
 		p1 = f.point
 		p2 = leaves[i + 1].point
@@ -119,7 +120,7 @@ def update_events(Q, T, f, q):
 
 		center = circumcenter(p1, p2, p3)
 		radius = distance(center, p1)
-		id = control.plot_circle (center.x, center.y, 'red', radius)
+		id = control.plot_circle (center.x, center.y, 'blue', radius)
 		if center.y - radius < q.y:
 			point = Point(center.x, center.y - radius)
 			point.plot(color='cyan')

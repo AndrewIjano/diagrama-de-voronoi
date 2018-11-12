@@ -8,7 +8,7 @@ class Node():
         right = left = hedge = None
 
     def __repr__(self):
-        return f'<Node: {self.p_i}, {self.p_j}>'
+        return f'<Node: ({self.p_i.x}, {self.p_i.y}), ({self.p_j.x}, {self.p_j.y})>'
 
 class Leaf():
     """Implementa uma folha"""
@@ -17,7 +17,7 @@ class Leaf():
         self.event = None
 
     def __repr__(self):
-        return f'<Leaf: {self.point}>'
+        return f'<Leaf: ({self.point.x}, {self.point.y})>'
 
 class BST():
     """Implementa uma árvore de busca balanceada"""
@@ -50,8 +50,6 @@ class BST():
         new_tree = Node(leaf.point, point)
         new_node = Node(point, leaf.point)
         new_leaf = Leaf(point)
-
-        print('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA', Leaf(leaf.point) == leaf)
 
         new_tree.left, new_tree.right = Leaf(leaf.point), new_node
         new_node.left, new_node.right = new_leaf, Leaf(leaf.point)
@@ -118,7 +116,7 @@ def get_x_breakpoint(node, line_y):
         roots += [(-b + math.sqrt(delta))/(2*a)]
 
     roots += [(-b - math.sqrt(delta))/(2*a)]
-
+    print(roots)
     if len(roots) == 1 or i.x <= roots[0] <= j.x:
         return roots[0]
     return roots[1]
