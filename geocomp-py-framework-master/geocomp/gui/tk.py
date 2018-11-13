@@ -44,6 +44,15 @@ def plot_line (x0, y0, x1, y1, color, linewidth):
 					   fill=color, width=linewidth)
 	return lineto_id
 
+################### ANDREW E EDUARDO MUDARAM #######################
+def plot_curve (xy, color, linewidth):
+	canvas_xy = []
+	for i in range(len(xy)//2):
+		canvas_xy += [canvas.r2cx(xy[i]), canvas.r2cy(xy[i+1])]
+	lineto_id = canvas.create_line (canvas_xy, fill=color, width=linewidth)
+	return lineto_id
+
+####################################################################
 def plot_vert_line (x, color, linewidth):
 	lineto_id = canvas.create_line (canvas.r2cx(x), 0,
 					   canvas.r2cx(x), int (canvas['height']),

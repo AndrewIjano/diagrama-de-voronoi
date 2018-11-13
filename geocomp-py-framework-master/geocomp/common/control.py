@@ -65,13 +65,21 @@ def sleep (amount = None):
 	if dont_sleep == 0:
 		gui.sleep ()
 
-
+################### ANDREW E EDUARDO MUDARAM #######################
 def plot_disc (x, y, color, r):
 	"""desenha um disco de centro (x,y), raio r e cor color na tela"""
 	if skip: return 0
 	plot_id = gui.plot_disc (x, y, color, r)
 	update ()
 	return plot_id
+
+def plot_curve (xy, color=config.COLOR_LINE, linewidth = config.LINEWIDTH):
+	"""desenha uma curva com uma lista de coordenadas xy"""
+	if skip: return 0
+	plot_id = gui.plot_curve (xy, color, linewidth)
+	update ()
+	return plot_id
+#####################################################################
 
 def plot_circle (x, y, color, r):
 	"""desenha um circulo de centro (x,y), raio r e cor color na tela"""
@@ -87,6 +95,7 @@ def plot_line (x0, y0, x1, y1, color=config.COLOR_LINE, linewidth = config.LINEW
 	update ()
 	return plot_id
 
+
 def plot_vert_line (x, color=config.COLOR_LINE_SPECIAL,
 			linewidth=config.LINEWIDTH_SPECIAL):
 	"""desenha uma linha vertical passando por x, de cor color"""
@@ -96,6 +105,7 @@ def plot_vert_line (x, color=config.COLOR_LINE_SPECIAL,
 	return plot_id
 
 # hmm... eu nao uso isso em lugar algum => nao foi testado...
+# usei => funciona
 def plot_horiz_line (y, color=config.COLOR_LINE_SPECIAL,
 			linewidth=config.LINEWIDTH_SPECIAL):
 	"""desenha uma linha horizontal passando por y, de cor color"""

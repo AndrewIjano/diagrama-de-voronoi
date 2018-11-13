@@ -12,14 +12,15 @@ class Point:
 		self.y = y
 		self.z = z
 		self.lineto_id = {}
-	######################### FIM ##########################
-	def plot (self, color=config.COLOR_POINT):
-		"Desenha o ponto na cor especificada"
-		self.plot_id = control.plot_disc (self.x, self.y, color,
-							config.RADIUS)
-		return self.plot_id
 
-        ################### VICTOR MUDOU #######################
+	################# ANDREW E EDUARDO MUDARAM ##############
+	def plot (self, color=config.COLOR_POINT, radius=config.RADIUS):
+		"Desenha o ponto na cor especificada"
+		self.plot_id = control.plot_disc (self.x, self.y, color, radius)
+		return self.plot_id
+	######################### FIM ##########################
+
+    ################### VICTOR MUDOU #######################
 
 	def unplot(self, id = None):
 		if id == None: id = self.plot_id
@@ -27,7 +28,7 @@ class Point:
 
 
 
-        ################## FIM ############################
+	################## FIM ############################
 
 	def hilight (self, color=config.COLOR_HI_POINT):
 		"Desenha o ponto com 'destaque' (raio maior e cor diferente)"
