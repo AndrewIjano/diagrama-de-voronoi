@@ -17,9 +17,11 @@ class Node():
 
 class Leaf():
     """Implementa uma folha"""
-    def __init__(self, point):
+    def __init__(self, point, pred=None, succ=None):
         self.point = point
         self.event = None
+        self.pred = pred
+        self.succ = succ
 
     def __repr__(self):
         return f'<Leaf: ({self.point.x}, {self.point.y})>'
@@ -51,13 +53,21 @@ class BST():
         return inner_search(self.root, point)
 
     def split_and_insert(self, leaf, point):
-        """Substitui a folha da árvore pela subárvore com três folhas"""
+        """Substitui a folha da árvore pela subárvore com três folhas:
+
+            leaf   =>    new_tree
+                        /        \\
+             Leaf(leaf.point)     new_node
+                                 /       \\
+                               new_leaf  Leaf(leaf.point)
+        """
         new_tree = Node(leaf.point, point)
         new_node = Node(point, leaf.point)
-        new_leaf = Leaf(point)
+        new_leaf = Leaf(point, pred=new_tree, succ=new_node)
 
-        new_tree.left, new_tree.right = Leaf(leaf.point), new_node
-        new_node.left, new_node.right = new_leaf, Leaf(leaf.point)
+        new_tree.left, new_tree.right = Leaf(leaf.point, succ=new_tree), new_node
+        new_node.left, new_node.right = new_leaf, Leaf(leaf.point, pred=new_node)
+        new_node.right.succ = leaf.succ
 
         def insert_tree(node, new_tree, point):
             if isinstance(node, Leaf):
@@ -95,11 +105,26 @@ class BST():
         return inner_all_leaves(self.root)
 
     def __str__(self):
-        def inner_print(node):
-            if isinstance(node, Leaf):
-                return node
-            return f'{node} {inner_print(node.left)} {inner_print(node.right)}'
-        return f'<BST: {inner_print(self.root)}>'
+        queue = [self.root]
+        string = ''
+        count = div = 1
+        while len(queue) > 0:
+            n = queue.pop(0)
+            string += repr(n)
+            if count % div == 0:
+                count = 0
+                div *= 2
+                string += '\n'
+            if not isinstance(n, Leaf):
+                queue.append(n.left)
+                queue.append(n.right)
+            count += 1
+        return string
+        # def inner_print(node):
+        #     if isinstance(node, Leaf):
+        #         return node
+        #     return f'{node} {inner_print(node.left)} {inner_print(node.right)}'
+        # return f'<BST: {inner_print(self.root)}>'
 
 def get_x_breakpoint(node, line_y):
     """ Calcula a coordenada x do breakpoint dado a tupla de pontos
@@ -108,8 +133,8 @@ def get_x_breakpoint(node, line_y):
     i, j = node.p_i, node.p_j
     g = lambda h : lambda x : (x**2 - 2*h.x*x + h.x**2 + h.y**2- line_y**2)/(2*(h.y - line_y))
     f_i, f_j = g(i), g(j)
-    points_i = [Point(x, f_i(x)) for x in range(-100, 100)]
-    points_j = [Point(x, f_j(x)) for x in range(-100, 100)]
+    points_i = [Point(x/10, f_i(x/10)) for x in range(-100, 100)]
+    points_j = [Point(x/10, f_j(x/10)) for x in range(-100, 100)]
 
     for p in points_i: p.plot(color='cyan', radius=1)
     for p in points_j: p.plot(color='yellow', radius=1)
@@ -118,16 +143,7 @@ def get_x_breakpoint(node, line_y):
     b = 2 * (j.x*i.y - i.x*j.y + line_y * (i.x - j.x))
     c = (j.y - line_y) * (i.x**2 + i.y**2 - line_y**2)\
         - (j.x**2 + j.y**2 - line_y**2) * (i.y - line_y)
-    # a = i.y - j.y
-    # b = 2 * (j.y*i.x - i.y * j.x + line_y * (j.x - i.x))
-    # c = i.y * (j.x**2 + j.y**2)  \
-    #     - j.y * (i.x**2 + i.y**2)\
-    #     + line_y**2 * (j.y - i.y)
 
-    # a = (1/(i.y - line_y) - 1/(j.y - line_y))/2
-    # b = (j.x/(j.y - line_y) - i.x/(i.y - j.x))
-    # c = (i.x**2 - line_y**2) / (2*(i.y - line_y)) \
-    #     + (line_y**2 - j.x**2 - j.y**2) / (2*(j.y - line_y))
     roots = []
     delta = b**2 - 4*a*c
     if delta < 0:
