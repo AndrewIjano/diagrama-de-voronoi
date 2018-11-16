@@ -10,10 +10,10 @@ class Node():
     def __init__(self, left_point, right_point):
         self.p_i = left_point
         self.p_j = right_point
-        right = left = hedge = None
+        self.right = self.left = self.hedge = self.father = None
 
     def __repr__(self):
-        return f'<Node: ({self.p_i.x}, {self.p_i.y}), ({self.p_j.x}, {self.p_j.y})>'
+        return f'<Node: ({int(self.p_i.x)}, {int(self.p_i.y)}), ({int(self.p_j.x)}, {int(self.p_j.y)})>'
 
 class Leaf():
     """Implementa uma folha"""
@@ -24,7 +24,7 @@ class Leaf():
         self.succ = succ
 
     def __repr__(self):
-        return f'<Leaf: ({self.point.x}, {self.point.y})>'
+        return f'<Leaf: ({int(self.point.x)}, {int(self.point.y)})>'
 
 class BST():
     """Implementa uma árvore de busca balanceada"""
@@ -68,30 +68,53 @@ class BST():
         new_tree.left, new_tree.right = Leaf(leaf.point, succ=new_tree), new_node
         new_node.left, new_node.right = new_leaf, Leaf(leaf.point, pred=new_node)
         new_node.right.succ = leaf.succ
+        new_tree.left.pred = leaf.pred
+        new_node.father = new_tree
 
-        def insert_tree(node, new_tree, point):
-            if isinstance(node, Leaf):
-                return new_tree
-            x_breakpoint = get_x_breakpoint(node, point.y)
-            if point.x < x_breakpoint:
-                node.left = insert_tree(node.left, new_tree, point)
-            else:
-                node.right = insert_tree(node.right, new_tree, point)
-            return node
+        if leaf.pred is not None and leaf.pred.right == leaf:
+            new_tree.father = leaf.pred
+            leaf.pred.right = new_tree
+        elif leaf.succ is not None:
+            new_tree.father = leaf.succ
+            leaf.succ.left = new_tree
+        else:
+            self.root = new_tree
 
-        self.root = insert_tree(self.root, new_tree, point)
+        # print('split_and_insert: L_left:', new_tree.left, new_tree.left.pred, new_tree.left.succ)
+        # print('split_and_insert: L_right:', new_node.right, new_node.right.pred, new_node.right.succ)
         return new_tree, new_leaf, new_node
 
-    def delete_min(self):
-        """Remove a menor folha da árvore"""
-        def inner_delete_min(node):
-            if isinstance(node.left, Leaf):
-                return node.right
-            node.left = delete_min(node.left)
-            return node
-        self.root = delete_min(self.root)
+    def remove(self, leaf):
+        """Remove uma folha da árvore e devolve os dois nós internos associados
+        e seu substituto
+        """
+        def substitute_node(node, substitute):
+            if node == self.root:
+                self.root = substitute    
+            elif node.father.left == node:
+                node.father.left = substitute
+            else:
+                node.father.right = substitute
 
-    # def delete()
+        pred, succ = leaf.pred, leaf.succ
+        if pred is None:
+            substitute_node(succ, succ.right)
+            return pred, succ, None
+        if succ is None:
+            substitute_node(pred, pred.left)
+            return pred, succ, None
+
+        new_node = Node(pred.p_i, succ.p_j)
+        remov, subst = (pred, succ) if pred.right == leaf else (succ, pred)
+        other_leaf   = remov.right  if remov.left == leaf else remov.left
+
+        substitute_node(remov, other_leaf)
+        substitute_node(subst, new_node)
+
+        new_node.father = subst.father
+        new_node.left = subst.left
+        new_node.right = subst.right
+        return pred, succ, new_node
 
     def all_leaves(self):
         """Retorna todas as folhas da árvore em ordem crescente"""

@@ -13,10 +13,11 @@ from geocomp.voronoi.BST import BST
 from geocomp.voronoi.circumcircle import circumcenter, distance
 
 class Event():
-	def __init__(self, point, is_site_event, leaf=None):
+	def __init__(self, point, is_site_event, leaf=None, center=None):
 		self.point = point
 		self.is_site_event = is_site_event
 		self.leaf = leaf
+		self.center = center
 
 	def __repr__(self):
 		return repr(self.point)
@@ -48,7 +49,6 @@ def Fortune(P):
 		q = heappop(Q)
 		q.point.hilight()
 		sweep = control.plot_horiz_line(q.point.y, color='green')
-
 		if q.is_site_event:
 			print(f'({q.point.x}, {q.point.y})', 'evento ponto')
 			handle_site_event(q.point, T, Q, V)
@@ -56,12 +56,10 @@ def Fortune(P):
 			print(f'({q.point.x}, {q.point.y})', 'evento circulo')
 			handle_circle_event(q, T, Q, V)
 			q.point.unplot()
-			# trata_evento_circulo(q, T, Q, V)
-		print('T:', T)
+		# print('T:', T)
 		print()
 		control.sleep()
 		control.thaw_update()
-		control.update()
 
 		control.plot_delete(sweep)
 		q.point.unhilight()
@@ -79,53 +77,43 @@ def handle_site_event(q, T, Q, V):
 			f.event.point.unplot()
 			Q.remove(f.event)
 
-
 		u, f, v = T.split_and_insert(f, q)
 		l = T.all_leaves()
-		# print(l)
 		update_events(Q, T, f, q)
-		# print('f:', f)
 
 def handle_circle_event(q, T, Q, V):
 	f = q.leaf
+	# print('remove', f, f.pred, f.succ)
+	pred, succ, new_node = T.remove(f)
 
 
 def update_events(Q, T, f, q):
 	leaves = T.all_leaves()
 	i = leaves.index(f)
 	if i > 1:
-		p1 = f.point
-		p2 = leaves[i - 1].point
-		p3 = leaves[i - 2].point
+		p2, p3 = leaves[i-1].point, leaves[i-2].point
 		p2.hilight('yellow'), p3.hilight('yellow')
-
-		center = circumcenter(p1, p2, p3)
-		radius = distance(center, p1)
-		id = control.plot_circle (center.x, center.y, 'red', radius)
-		if center.y - radius < q.y:
-			point = Point(center.x, center.y - radius)
-			point.plot(color='cyan')
-			heappush(Q, Event(point, False, f))
-		control.sleep()
+		add_circle_event(f, leaves[i-1], leaves[i-2], q, Q)
 		p2.unhilight(), p3.unhilight()
-		control.plot_delete(id)
 
 	if len(leaves) - i > 2:
-		p1 = f.point
-		p2 = leaves[i + 1].point
-		p3 = leaves[i + 2].point
+		p2, p3 = leaves[i+1].point, leaves[i+2].point
 		p2.hilight('yellow'), p3.hilight('yellow')
-
-		center = circumcenter(p1, p2, p3)
-		radius = distance(center, p1)
-		id = control.plot_circle (center.x, center.y, 'blue', radius)
-		if center.y - radius < q.y:
-			point = Point(center.x, center.y - radius)
-			point.plot(color='cyan')
-			heappush(Q, Event(point, False, f))
-		control.sleep()
+		add_circle_event(f, leaves[i+1], leaves[i+2], q, Q)
 		p2.unhilight(), p3.unhilight()
-		control.plot_delete(id)
+
+
+def add_circle_event(leaf1, leaf2, leaf3, q, Q):
+	center = circumcenter(leaf1.point, leaf2.point, leaf3.point)
+	radius = distance(center, leaf1.point)
+	circle = control.plot_circle(center.x, center.y, 'blue', radius)
+	if center.y - radius < q.y:
+		point = Point(center.x, center.y - radius)
+		leaf2.event = Event(point, False, leaf2, center)
+		heappush(Q, leaf2.event)
+		point.plot(color='cyan')
+	control.sleep()
+	control.plot_delete(circle)
 
 if __name__== '__main__':
     P = [Point(x, x*(-1)**(x)) for x in range(10)]
