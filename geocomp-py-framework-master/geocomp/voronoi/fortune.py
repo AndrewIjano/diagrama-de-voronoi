@@ -56,7 +56,7 @@ def Fortune(P):
 			print(f'({q.point.x}, {q.point.y})', 'evento circulo')
 			handle_circle_event(q, T, Q, V)
 			q.point.unplot()
-		# print('T:', T)
+		print('T:', T)
 		print()
 		control.sleep()
 		control.thaw_update()
@@ -73,17 +73,25 @@ def handle_site_event(q, T, Q, V):
 		T.insert(q)
 	else:
 		f = T.search(q)
+		print('f:', f)
 		if f.event is not None:
 			f.event.point.unplot()
+			# f.event.point.hilight()
 			Q.remove(f.event)
+			# f.event = None
+			control.sleep()
+			# f.event.point.unhilight()
 
 		u, f, v = T.split_and_insert(f, q)
 		l = T.all_leaves()
+		# print('T:', T)
+		print()
+		# print(l)
 		update_events(Q, T, f, q)
 
 def handle_circle_event(q, T, Q, V):
 	f = q.leaf
-	# print('remove', f, f.pred, f.succ)
+	print('remove', f, f.pred, f.succ)
 	pred, succ, new_node = T.remove(f)
 
 
