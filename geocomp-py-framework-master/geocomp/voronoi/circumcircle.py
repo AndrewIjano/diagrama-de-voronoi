@@ -1,6 +1,6 @@
 import math
 from geocomp.common.point import Point
-import numpy as np
+# import numpy as np
 
 from geocomp.common import control
 from geocomp.common.guiprim import *

@@ -5,13 +5,13 @@
 from geocomp.common import control
 from geocomp.common.guiprim import *
 from queue import PriorityQueue
-from heapq import heappush, heappop, heapify
+from pqdict import pqdict
 from geocomp.common.point import Point
 from geocomp.common.segment import Segment
 from geocomp.voronoi.DCEL import DCEL
 from geocomp.voronoi.BST import BST
 from geocomp.voronoi.circumcircle import circumcenter, distance
-
+import math
 class Event():
 	def __init__(self, point, is_site_event, leaf=None, center=None):
 		self.point = point
@@ -19,23 +19,12 @@ class Event():
 		self.leaf = leaf
 		self.center = center
 
-	def __repr__(self):
-		return repr(self.point)
-
-	def __eq__(self, other):
-		return self.point.y == other.point.y
-
-	def __lt__(self, other):
-		return self.point.y > other.point.y
-
-	def __gt__(self, other):
-		return self.point.y < other.point.y
+	def __str__(self):
+		return f'({self.point.x}, {self.point.y})'
 
 def event_queue(P):
-	Q = [Event(p, True) for p in P]
-	for p in P:
-		p.plot(color='red')
-	heapify(Q)
+	events = [Event(p, True) for p in P]
+	Q = pqdict({e : e.point.y for e in events}, reverse=True)
 	return Q
 
 def Fortune(P):
@@ -46,7 +35,8 @@ def Fortune(P):
 	while Q:
 		control.freeze_update()
 
-		q = heappop(Q)
+		# q = heappop(Q)
+		q = Q.pop()
 		q.point.hilight()
 		sweep = control.plot_horiz_line(q.point.y, color='green')
 		if q.is_site_event:
@@ -56,7 +46,7 @@ def Fortune(P):
 			print(f'({q.point.x}, {q.point.y})', 'evento circulo')
 			handle_circle_event(q, T, Q, V)
 			q.point.unplot()
-		print('T:', T)
+		# print('T:', T)
 		print()
 		control.sleep()
 		control.thaw_update()
@@ -76,17 +66,11 @@ def handle_site_event(q, T, Q, V):
 		print('f:', f)
 		if f.event is not None:
 			f.event.point.unplot()
-			# f.event.point.hilight()
-			Q.remove(f.event)
-			# f.event = None
-			control.sleep()
-			# f.event.point.unhilight()
+			Q.updateitem(f.event, math.inf)
+			Q.pop()
 
 		u, f, v = T.split_and_insert(f, q)
 		l = T.all_leaves()
-		# print('T:', T)
-		print()
-		# print(l)
 		update_events(Q, T, f, q)
 
 def handle_circle_event(q, T, Q, V):
@@ -118,7 +102,7 @@ def add_circle_event(leaf1, leaf2, leaf3, q, Q):
 	if center.y - radius < q.y:
 		point = Point(center.x, center.y - radius)
 		leaf2.event = Event(point, False, leaf2, center)
-		heappush(Q, leaf2.event)
+		Q.additem(leaf2.event, leaf2.event.point.y)
 		point.plot(color='cyan')
 	control.sleep()
 	control.plot_delete(circle)

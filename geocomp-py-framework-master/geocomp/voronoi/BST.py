@@ -80,7 +80,7 @@ class BST():
             leaf.pred.p_j = left_split
         if leaf.succ is not None:
             leaf.succ.p_i = right_split
-             
+
         if leaf.pred is not None and leaf.pred.right == leaf:
             # print('right')
             new_tree.father = leaf.pred
@@ -134,8 +134,8 @@ class BST():
         remov, subst = (pred, succ) if pred.right == leaf else (succ, pred)
         other_node   = remov.right  if remov.left == leaf else remov.left
 
-        print('#############', remov, subst)
-        print(pred, succ)
+        # print('#############', remov, subst)
+        # print(pred, succ)
         # print('aaaaaaaaaaaaaa')
         # print('succ.p_j:', succ.p_j)
         # print('antes: succ.p_j.pred', succ.p_j.pred)
@@ -156,14 +156,14 @@ class BST():
         substitute_node(remov, other_node)
         substitute_father(other_node, remov.father)
         # print('final: succ.p_j.pred', succ.p_j.pred)
-        print('\n test:')
-        print(self.root)
-        if isinstance(self.root, Node):
-            print(self.root.right)
-            if isinstance(self.root.right, Node):
-                print(self.root.right.left)
-                if isinstance(self.root.right.left, Node):
-                    print(self.root.right.left.left == succ.p_j, self.root.right.left.left.pred,)
+        # print('\n test:')
+        # print(self.root)
+        # if isinstance(self.root, Node):
+        #     print(self.root.right)
+        #     if isinstance(self.root.right, Node):
+        #         print(self.root.right.left)
+        #         if isinstance(self.root.right.left, Node):
+        #             print(self.root.right.left.left == succ.p_j, self.root.right.left.left.pred,)
         # print('children:', self._str_children(succ))
         return pred, succ, new_node
 
@@ -214,8 +214,8 @@ def get_x_breakpoint(node, line_y):
     if i.y != line_y and j.y != line_y:
         g = lambda h : lambda x : (x**2 - 2*h.x*x + h.x**2 + h.y**2- line_y**2)/(2*(h.y - line_y))
         f_i, f_j = g(i), g(j)
-        points_i = [Point(x/10, f_i(x/10)) for x in range(-100, 100)]
-        points_j = [Point(x/10, f_j(x/10)) for x in range(-100, 100)]
+        points_i = [Point(x/50, f_i(x/50)) for x in range(-500, 8000)]
+        points_j = [Point(x/50, f_j(x/50)) for x in range(-500, 8000)]
 
         for p in points_i: p.plot(color='cyan', radius=1)
         for p in points_j: p.plot(color='yellow', radius=1)
