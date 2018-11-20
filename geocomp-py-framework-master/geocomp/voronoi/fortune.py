@@ -76,7 +76,7 @@ def handle_site_event(q, T, Q, V):
 def handle_circle_event(q, T, Q, V):
 	f = q.leaf
 	print('remove', f, f.pred, f.succ)
-	pred, succ, new_node = T.remove(f)
+	pred, succ, new_node = T.remove(f, Q)
 
 
 def update_events(Q, T, f, q):

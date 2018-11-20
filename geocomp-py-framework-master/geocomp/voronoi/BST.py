@@ -99,7 +99,7 @@ class BST():
         # print('split_and_insert: L_right:', new_node.right, new_node.right.pred, new_node.right.succ)
         return new_tree, new_leaf, new_node
 
-    def remove(self, leaf):
+    def remove(self, leaf, Q):
         """Remove uma folha da árvore e devolve os dois nós internos associados
         e seu substituto
                   subst                   new_node
@@ -120,6 +120,13 @@ class BST():
             if isinstance(node, Node):
                 node.father = substitute
 
+        def remove_circle_event(leaf, Q):
+            if leaf.event is not None:
+                Q.updateitem(leaf.event, math.inf)
+                Q.pop()
+                leaf.event.point.unplot()
+                leaf.event = None
+
         pred, succ = leaf.pred, leaf.succ
         if pred is None:
             substitute_node(succ, succ.right)
@@ -134,15 +141,8 @@ class BST():
         remov, subst = (pred, succ) if pred.right == leaf else (succ, pred)
         other_node   = remov.right  if remov.left == leaf else remov.left
 
-        # print('#############', remov, subst)
-        # print(pred, succ)
-        # print('aaaaaaaaaaaaaa')
-        # print('succ.p_j:', succ.p_j)
-        # print('antes: succ.p_j.pred', succ.p_j.pred)
         pred.p_i.succ = new_node
         succ.p_j.pred = new_node
-        # print('new_node:', new_node)
-        # print('depois: succ.p_j.pred', succ.p_j.pred)
 
         new_node.father = subst.father
         new_node.left = subst.left
@@ -150,21 +150,14 @@ class BST():
         substitute_node(subst, new_node)
         substitute_father(subst.left, new_node)
         substitute_father(subst.right, new_node)
-        # print('meio: succ.p_j.pred', succ.p_j.pred)
 
         remov.father = remov.father if remov.father != subst else new_node
         substitute_node(remov, other_node)
         substitute_father(other_node, remov.father)
-        # print('final: succ.p_j.pred', succ.p_j.pred)
-        # print('\n test:')
-        # print(self.root)
-        # if isinstance(self.root, Node):
-        #     print(self.root.right)
-        #     if isinstance(self.root.right, Node):
-        #         print(self.root.right.left)
-        #         if isinstance(self.root.right.left, Node):
-        #             print(self.root.right.left.left == succ.p_j, self.root.right.left.left.pred,)
-        # print('children:', self._str_children(succ))
+
+        remove_circle_event(pred.p_i, Q)
+        remove_circle_event(succ.p_j, Q)
+
         return pred, succ, new_node
 
     def all_leaves(self):
@@ -200,11 +193,6 @@ class BST():
 
     def __str__(self):
         return self._str_children(self.root)
-        # def inner_print(node):
-        #     if isinstance(node, Leaf):
-        #         return node
-        #     return f'{node} {inner_print(node.left)} {inner_print(node.right)}'
-        # return f'<BST: {inner_print(self.root)}>'
 
 def get_x_breakpoint(node, line_y):
     """ Calcula a coordenada x do breakpoint dado a tupla de pontos
@@ -214,8 +202,8 @@ def get_x_breakpoint(node, line_y):
     if i.y != line_y and j.y != line_y:
         g = lambda h : lambda x : (x**2 - 2*h.x*x + h.x**2 + h.y**2- line_y**2)/(2*(h.y - line_y))
         f_i, f_j = g(i), g(j)
-        points_i = [Point(x/50, f_i(x/50)) for x in range(-500, 8000)]
-        points_j = [Point(x/50, f_j(x/50)) for x in range(-500, 8000)]
+        points_i = [Point(x/50, f_i(x/50)) for x in range(-500, 500)]
+        points_j = [Point(x/50, f_j(x/50)) for x in range(-500, 500)]
 
         for p in points_i: p.plot(color='cyan', radius=1)
         for p in points_j: p.plot(color='yellow', radius=1)
