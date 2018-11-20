@@ -70,7 +70,6 @@ def handle_site_event(q, T, Q, V):
 			Q.pop()
 
 		u, f, v = T.split_and_insert(f, q)
-		l = T.all_leaves()
 		update_events(Q, T, f, q)
 
 def handle_circle_event(q, T, Q, V):
@@ -80,24 +79,21 @@ def handle_circle_event(q, T, Q, V):
 
 
 def update_events(Q, T, f, q):
-	leaves = T.all_leaves()
-	i = leaves.index(f)
-	if i > 1:
-		p2, p3 = leaves[i-1].point, leaves[i-2].point
-		p2.hilight('yellow'), p3.hilight('yellow')
-		add_circle_event(f, leaves[i-1], leaves[i-2], q, Q)
-		p2.unhilight(), p3.unhilight()
+	if f.pred is not None and f.pred.p_i.pred is not None:
+		leaf2 = f.pred.p_i
+		leaf3 = leaf2.pred.p_i
+		add_circle_event(f, leaf2, leaf3, q, Q)
 
-	if len(leaves) - i > 2:
-		p2, p3 = leaves[i+1].point, leaves[i+2].point
-		p2.hilight('yellow'), p3.hilight('yellow')
-		add_circle_event(f, leaves[i+1], leaves[i+2], q, Q)
-		p2.unhilight(), p3.unhilight()
-
+	if f.succ is not None and f.succ.p_j.succ is not None:
+		leaf2 = f.succ.p_j
+		leaf3 = leaf2.succ.p_j
+		add_circle_event(f, leaf2, leaf3, q, Q)
 
 def add_circle_event(leaf1, leaf2, leaf3, q, Q):
-	center = circumcenter(leaf1.point, leaf2.point, leaf3.point)
-	radius = distance(center, leaf1.point)
+	p1, p2, p3 = leaf1.point, leaf2.point, leaf3.point
+	p2.hilight('yellow'), p3.hilight('yellow')
+	center = circumcenter(p1, p2, p3)
+	radius = distance(center, p1)
 	circle = control.plot_circle(center.x, center.y, 'blue', radius)
 	if center.y - radius < q.y:
 		point = Point(center.x, center.y - radius)
@@ -106,6 +102,8 @@ def add_circle_event(leaf1, leaf2, leaf3, q, Q):
 		point.plot(color='cyan')
 	control.sleep()
 	control.plot_delete(circle)
+	p2.unhilight(), p3.unhilight()
+
 
 if __name__== '__main__':
     P = [Point(x, x*(-1)**(x)) for x in range(10)]
