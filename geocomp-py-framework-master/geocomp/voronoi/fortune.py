@@ -46,13 +46,16 @@ def Fortune(P):
 			print(f'({q.point.x}, {q.point.y})', 'evento circulo')
 			handle_circle_event(q, T, Q, V)
 			q.point.unplot()
-		# print('T:', T)
+
+		print('Q:',Q)
+		print('T:', T)
 		print()
 		control.sleep()
 		control.thaw_update()
 
 		control.plot_delete(sweep)
 		q.point.unhilight()
+		print('----------------')
 
 	# finalize_voronoi(V, T)
 	print('fim do Voronoi')
@@ -68,27 +71,56 @@ def handle_site_event(q, T, Q, V):
 			f.event.point.unplot()
 			Q.updateitem(f.event, math.inf)
 			Q.pop()
+			f.event = None
 
 		u, f, v = T.split_and_insert(f, q)
 		update_events(Q, T, f, q)
 
+def is_there_left_triple(leaf):
+	return leaf.pred is not None and leaf.pred.p_i.pred is not None
+
+def is_there_right_triple(leaf):
+	return leaf.succ is not None and leaf.succ.p_j.succ is not None
+
 def handle_circle_event(q, T, Q, V):
 	f = q.leaf
+	print('event:', repr(q))
 	print('remove', f, f.pred, f.succ)
 	pred, succ, new_node = T.remove(f, Q)
 
+	left_leaf = new_node.p_i
+	right_leaf = new_node.p_j
+
+	if is_there_left_triple(left_leaf):
+		leaf2 = left_leaf.pred.p_i
+		leaf3 = leaf2.pred.p_i
+		if leaf2.event is not None:
+			add_circle_event(left_leaf, leaf2, leaf3, q.point, Q)
+		else:
+			print('WWWWWWWWWWWWWWW')
+	if is_there_right_triple(right_leaf):
+		leaf2 = left_leaf.succ.p_j
+		leaf3 = leaf2.succ. p_j
+		if leaf2.event is not None:
+			add_circle_event(right_leaf, leaf2, leaf3, q.point, Q)
+		else:
+			print('OOOOOOOOOOOOOOOOOO')
 
 def update_events(Q, T, f, q):
-	if f.pred is not None and f.pred.p_i.pred is not None:
+	if is_there_left_triple(f):
 		leaf2 = f.pred.p_i
 		leaf3 = leaf2.pred.p_i
-		add_circle_event(f, leaf2, leaf3, q, Q)
-
-	if f.succ is not None and f.succ.p_j.succ is not None:
+		if leaf2.event is not None:
+			add_circle_event(f, leaf2, leaf3, q, Q)
+		else:
+			print('AAAAAAAAAAAAAAAAAAA')
+	if is_there_right_triple(f):
 		leaf2 = f.succ.p_j
 		leaf3 = leaf2.succ.p_j
-		add_circle_event(f, leaf2, leaf3, q, Q)
-
+		if leaf2.event is not None:
+			add_circle_event(f, leaf2, leaf3, q, Q)
+		else:
+			print('EEEEEEEEEEEEEEEEEEE')
 def add_circle_event(leaf1, leaf2, leaf3, q, Q):
 	p1, p2, p3 = leaf1.point, leaf2.point, leaf3.point
 	p2.hilight('yellow'), p3.hilight('yellow')
@@ -98,6 +130,8 @@ def add_circle_event(leaf1, leaf2, leaf3, q, Q):
 	if center.y - radius < q.y:
 		point = Point(center.x, center.y - radius)
 		leaf2.event = Event(point, False, leaf2, center)
+		print('Add Circle:', repr(leaf2), leaf2.event.point.y)
+		print('Esq P:', leaf1, 'Dir P:', leaf3)
 		Q.additem(leaf2.event, leaf2.event.point.y)
 		point.plot(color='cyan')
 	control.sleep()

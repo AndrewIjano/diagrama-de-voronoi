@@ -1,0 +1,302 @@
+(5.0, 10.0) evento ponto
+Q: pqdict({<geocomp.voronoi.fortune.Event object at 0x7f5a7a4468d0>: 9.0, <geocomp.voronoi.fortune.Event object at 0x7f5a7a446940>: 7.0, <geocomp.voronoi.fortune.Event object at 0x7f5a7a446908>: 8.0, <geocomp.voronoi.fortune.Event object at 0x7f5a7a4469e8>: 4.0, <geocomp.voronoi.fortune.Event object at 0x7f5a7a446978>: 6.0, <geocomp.voronoi.fortune.Event object at 0x7f5a7a4469b0>: 5.0})
+T: <Leaf: (5, 10)>		=> pred: None succ: None
+
+
+----------------
+(3.0, 9.0) evento ponto
+f: <Leaf: (5, 10)>
+Q: pqdict({<geocomp.voronoi.fortune.Event object at 0x7f5a7a446908>: 8.0, <geocomp.voronoi.fortune.Event object at 0x7f5a7a446940>: 7.0, <geocomp.voronoi.fortune.Event object at 0x7f5a7a4469b0>: 5.0, <geocomp.voronoi.fortune.Event object at 0x7f5a7a4469e8>: 4.0, <geocomp.voronoi.fortune.Event object at 0x7f5a7a446978>: 6.0})
+T: <Node: (5, 10), (3, 9)>		=> father: None
+<Leaf: (5, 10)>		=> pred: None succ: <Node: (5, 10), (3, 9)>
+<Node: (3, 9), (5, 10)>		=> father: <Node: (5, 10), (3, 9)>
+<Leaf: (3, 9)>		=> pred: <Node: (5, 10), (3, 9)> succ: <Node: (3, 9), (5, 10)>
+<Leaf: (5, 10)>		=> pred: <Node: (3, 9), (5, 10)> succ: None
+
+
+----------------
+(7.0, 8.0) evento ponto
+[-2.1622776601683795, 4.16227766016838]
+[4.16227766016838, -2.1622776601683795]
+f: <Leaf: (5, 10)>
+AAAAAAAAAAAAAAAAAAA
+Q: pqdict({<geocomp.voronoi.fortune.Event object at 0x7f5a7a446940>: 7.0, <geocomp.voronoi.fortune.Event object at 0x7f5a7a446978>: 6.0, <geocomp.voronoi.fortune.Event object at 0x7f5a7a4469b0>: 5.0, <geocomp.voronoi.fortune.Event object at 0x7f5a7a4469e8>: 4.0})
+T: <Node: (5, 10), (3, 9)>		=> father: None
+<Leaf: (5, 10)>		=> pred: None succ: <Node: (5, 10), (3, 9)>
+<Node: (3, 9), (5, 10)>		=> father: <Node: (5, 10), (3, 9)>
+<Leaf: (3, 9)>		=> pred: <Node: (5, 10), (3, 9)> succ: <Node: (3, 9), (5, 10)>
+<Node: (5, 10), (7, 8)>		=> father: <Node: (3, 9), (5, 10)>
+<Leaf: (5, 10)>		=> pred: <Node: (3, 9), (5, 10)> succ: <Node: (5, 10), (7, 8)>
+<Node: (7, 8), (5, 10)>		=> father: <Node: (5, 10), (7, 8)>
+<Leaf: (7, 8)>		=> pred: <Node: (5, 10), (7, 8)> succ: <Node: (7, 8), (5, 10)>
+<Leaf: (5, 10)>		=> pred: <Node: (7, 8), (5, 10)> succ: None
+
+
+----------------
+(1.0, 7.0) evento ponto
+[-6.477225575051661, 4.477225575051661]
+f: <Leaf: (5, 10)>
+EEEEEEEEEEEEEEEEEEE
+Q: pqdict({<geocomp.voronoi.fortune.Event object at 0x7f5a7a446978>: 6.0, <geocomp.voronoi.fortune.Event object at 0x7f5a7a4469e8>: 4.0, <geocomp.voronoi.fortune.Event object at 0x7f5a7a4469b0>: 5.0})
+T: <Node: (5, 10), (3, 9)>		=> father: None
+<Node: (5, 10), (1, 7)>		=> father: <Node: (5, 10), (3, 9)>
+<Node: (3, 9), (5, 10)>		=> father: <Node: (5, 10), (3, 9)>
+<Leaf: (5, 10)>		=> pred: None succ: <Node: (5, 10), (1, 7)>
+<Node: (1, 7), (5, 10)>		=> father: <Node: (5, 10), (1, 7)>
+<Leaf: (3, 9)>		=> pred: <Node: (5, 10), (3, 9)> succ: <Node: (3, 9), (5, 10)>
+<Node: (5, 10), (7, 8)>		=> father: <Node: (3, 9), (5, 10)>
+<Leaf: (1, 7)>		=> pred: <Node: (5, 10), (1, 7)> succ: <Node: (1, 7), (5, 10)>
+<Leaf: (5, 10)>		=> pred: <Node: (1, 7), (5, 10)> succ: <Node: (5, 10), (3, 9)>
+<Leaf: (5, 10)>		=> pred: <Node: (3, 9), (5, 10)> succ: <Node: (5, 10), (7, 8)>
+<Node: (7, 8), (5, 10)>		=> father: <Node: (5, 10), (7, 8)>
+<Leaf: (7, 8)>		=> pred: <Node: (5, 10), (7, 8)> succ: <Node: (7, 8), (5, 10)>
+<Leaf: (5, 10)>		=> pred: <Node: (7, 8), (5, 10)> succ: None
+
+
+----------------
+(8.0, 6.0) evento ponto
+[-10.745966692414834, 4.745966692414834]
+[4.745966692414834, -10.745966692414834]
+[5.0, 13.0]
+[13.0, 5.0]
+f: <Leaf: (5, 10)>
+AAAAAAAAAAAAAAAAAAA
+Q: pqdict({<geocomp.voronoi.fortune.Event object at 0x7f5a7a4469b0>: 5.0, <geocomp.voronoi.fortune.Event object at 0x7f5a7a4469e8>: 4.0})
+T: <Node: (5, 10), (3, 9)>		=> father: None
+<Node: (5, 10), (1, 7)>		=> father: <Node: (5, 10), (3, 9)>
+<Node: (3, 9), (5, 10)>		=> father: <Node: (5, 10), (3, 9)>
+<Leaf: (5, 10)>		=> pred: None succ: <Node: (5, 10), (1, 7)>
+<Node: (1, 7), (5, 10)>		=> father: <Node: (5, 10), (1, 7)>
+<Leaf: (3, 9)>		=> pred: <Node: (5, 10), (3, 9)> succ: <Node: (3, 9), (5, 10)>
+<Node: (5, 10), (7, 8)>		=> father: <Node: (3, 9), (5, 10)>
+<Leaf: (1, 7)>		=> pred: <Node: (5, 10), (1, 7)> succ: <Node: (1, 7), (5, 10)>
+<Leaf: (5, 10)>		=> pred: <Node: (1, 7), (5, 10)> succ: <Node: (5, 10), (3, 9)>
+<Leaf: (5, 10)>		=> pred: <Node: (3, 9), (5, 10)> succ: <Node: (5, 10), (7, 8)>
+<Node: (7, 8), (5, 10)>		=> father: <Node: (5, 10), (7, 8)>
+<Leaf: (7, 8)>		=> pred: <Node: (5, 10), (7, 8)> succ: <Node: (7, 8), (5, 10)>
+<Node: (5, 10), (8, 6)>		=> father: <Node: (7, 8), (5, 10)>
+<Leaf: (5, 10)>		=> pred: <Node: (7, 8), (5, 10)> succ: <Node: (5, 10), (8, 6)>
+<Node: (8, 6), (5, 10)>		=> father: <Node: (5, 10), (8, 6)>
+<Leaf: (8, 6)>		=> pred: <Node: (5, 10), (8, 6)> succ: <Node: (8, 6), (5, 10)>
+<Leaf: (5, 10)>		=> pred: <Node: (8, 6), (5, 10)> succ: None
+
+
+----------------
+(4.5, 5.0) evento ponto
+[-15.0, 5.0]
+[-6.937129433613966, 3.6037961002806322]
+[3.6037961002806322, -6.937129433613966]
+f: <Leaf: (5, 10)>
+AAAAAAAAAAAAAAAAAAA
+EEEEEEEEEEEEEEEEEEE
+Q: pqdict({<geocomp.voronoi.fortune.Event object at 0x7f5a7a4469e8>: 4.0})
+T: <Node: (5, 10), (3, 9)>		=> father: None
+<Node: (5, 10), (1, 7)>		=> father: <Node: (5, 10), (3, 9)>
+<Node: (3, 9), (5, 10)>		=> father: <Node: (5, 10), (3, 9)>
+<Leaf: (5, 10)>		=> pred: None succ: <Node: (5, 10), (1, 7)>
+<Node: (1, 7), (5, 10)>		=> father: <Node: (5, 10), (1, 7)>
+<Leaf: (3, 9)>		=> pred: <Node: (5, 10), (3, 9)> succ: <Node: (3, 9), (5, 10)>
+<Node: (5, 10), (7, 8)>		=> father: <Node: (3, 9), (5, 10)>
+<Leaf: (1, 7)>		=> pred: <Node: (5, 10), (1, 7)> succ: <Node: (1, 7), (5, 10)>
+<Node: (5, 10), (4, 5)>		=> father: <Node: (1, 7), (5, 10)>
+<Leaf: (5, 10)>		=> pred: <Node: (3, 9), (5, 10)> succ: <Node: (5, 10), (7, 8)>
+<Node: (7, 8), (5, 10)>		=> father: <Node: (5, 10), (7, 8)>
+<Leaf: (5, 10)>		=> pred: <Node: (1, 7), (5, 10)> succ: <Node: (5, 10), (4, 5)>
+<Node: (4, 5), (5, 10)>		=> father: <Node: (5, 10), (4, 5)>
+<Leaf: (7, 8)>		=> pred: <Node: (5, 10), (7, 8)> succ: <Node: (7, 8), (5, 10)>
+<Node: (5, 10), (8, 6)>		=> father: <Node: (7, 8), (5, 10)>
+<Leaf: (4, 5)>		=> pred: <Node: (5, 10), (4, 5)> succ: <Node: (4, 5), (5, 10)>
+<Leaf: (5, 10)>		=> pred: <Node: (4, 5), (5, 10)> succ: <Node: (5, 10), (3, 9)>
+<Leaf: (5, 10)>		=> pred: <Node: (7, 8), (5, 10)> succ: <Node: (5, 10), (8, 6)>
+<Node: (8, 6), (5, 10)>		=> father: <Node: (5, 10), (8, 6)>
+<Leaf: (8, 6)>		=> pred: <Node: (5, 10), (8, 6)> succ: <Node: (8, 6), (5, 10)>
+<Leaf: (5, 10)>		=> pred: <Node: (8, 6), (5, 10)> succ: None
+
+
+----------------
+(4.0, 4.0) evento ponto
+[-19.24744871391589, 5.24744871391589]
+[-10.071067811865476, 4.0710678118654755]
+f: <Leaf: (5, 10)>
+EEEEEEEEEEEEEEEEEEE
+Q: pqdict({})
+T: <Node: (5, 10), (3, 9)>		=> father: None
+<Node: (5, 10), (1, 7)>		=> father: <Node: (5, 10), (3, 9)>
+<Node: (3, 9), (5, 10)>		=> father: <Node: (5, 10), (3, 9)>
+<Node: (5, 10), (4, 4)>		=> father: <Node: (5, 10), (1, 7)>
+<Node: (1, 7), (5, 10)>		=> father: <Node: (5, 10), (1, 7)>
+<Leaf: (3, 9)>		=> pred: <Node: (5, 10), (3, 9)> succ: <Node: (3, 9), (5, 10)>
+<Node: (5, 10), (7, 8)>		=> father: <Node: (3, 9), (5, 10)>
+<Leaf: (5, 10)>		=> pred: None succ: <Node: (5, 10), (4, 4)>
+<Node: (4, 4), (5, 10)>		=> father: <Node: (5, 10), (4, 4)>
+<Leaf: (1, 7)>		=> pred: <Node: (5, 10), (1, 7)> succ: <Node: (1, 7), (5, 10)>
+<Node: (5, 10), (4, 5)>		=> father: <Node: (1, 7), (5, 10)>
+<Leaf: (5, 10)>		=> pred: <Node: (3, 9), (5, 10)> succ: <Node: (5, 10), (7, 8)>
+<Node: (7, 8), (5, 10)>		=> father: <Node: (5, 10), (7, 8)>
+<Leaf: (4, 4)>		=> pred: <Node: (5, 10), (4, 4)> succ: <Node: (4, 4), (5, 10)>
+<Leaf: (5, 10)>		=> pred: <Node: (4, 4), (5, 10)> succ: <Node: (5, 10), (1, 7)>
+<Leaf: (5, 10)>		=> pred: <Node: (1, 7), (5, 10)> succ: <Node: (5, 10), (4, 5)>
+<Node: (4, 5), (5, 10)>		=> father: <Node: (5, 10), (4, 5)>
+<Leaf: (7, 8)>		=> pred: <Node: (5, 10), (7, 8)> succ: <Node: (7, 8), (5, 10)>
+<Node: (5, 10), (8, 6)>		=> father: <Node: (7, 8), (5, 10)>
+<Leaf: (4, 5)>		=> pred: <Node: (5, 10), (4, 5)> succ: <Node: (4, 5), (5, 10)>
+<Leaf: (5, 10)>		=> pred: <Node: (4, 5), (5, 10)> succ: <Node: (5, 10), (3, 9)>
+<Leaf: (5, 10)>		=> pred: <Node: (7, 8), (5, 10)> succ: <Node: (5, 10), (8, 6)>
+<Node: (8, 6), (5, 10)>		=> father: <Node: (5, 10), (8, 6)>
+<Leaf: (8, 6)>		=> pred: <Node: (5, 10), (8, 6)> succ: <Node: (8, 6), (5, 10)>
+<Leaf: (5, 10)>		=> pred: <Node: (8, 6), (5, 10)> succ: None
+
+
+----------------
+fim do Voronoi
+(5.0, 10.0) evento ponto
+Q: pqdict({<geocomp.voronoi.fortune.Event object at 0x7f5a7a4467f0>: 9.0, <geocomp.voronoi.fortune.Event object at 0x7f5a7a446ba8>: 7.0, <geocomp.voronoi.fortune.Event object at 0x7f5a7a446b38>: 8.0, <geocomp.voronoi.fortune.Event object at 0x7f5a7a446e48>: 4.0, <geocomp.voronoi.fortune.Event object at 0x7f5a7a446d30>: 6.0, <geocomp.voronoi.fortune.Event object at 0x7f5a7a446898>: 5.0})
+T: <Leaf: (5, 10)>		=> pred: None succ: None
+
+
+----------------
+(3.0, 9.0) evento ponto
+f: <Leaf: (5, 10)>
+Q: pqdict({<geocomp.voronoi.fortune.Event object at 0x7f5a7a446b38>: 8.0, <geocomp.voronoi.fortune.Event object at 0x7f5a7a446ba8>: 7.0, <geocomp.voronoi.fortune.Event object at 0x7f5a7a446898>: 5.0, <geocomp.voronoi.fortune.Event object at 0x7f5a7a446e48>: 4.0, <geocomp.voronoi.fortune.Event object at 0x7f5a7a446d30>: 6.0})
+T: <Node: (5, 10), (3, 9)>		=> father: None
+<Leaf: (5, 10)>		=> pred: None succ: <Node: (5, 10), (3, 9)>
+<Node: (3, 9), (5, 10)>		=> father: <Node: (5, 10), (3, 9)>
+<Leaf: (3, 9)>		=> pred: <Node: (5, 10), (3, 9)> succ: <Node: (3, 9), (5, 10)>
+<Leaf: (5, 10)>		=> pred: <Node: (3, 9), (5, 10)> succ: None
+
+
+----------------
+(7.0, 8.0) evento ponto
+[-2.1622776601683795, 4.16227766016838]
+[4.16227766016838, -2.1622776601683795]
+f: <Leaf: (5, 10)>
+AAAAAAAAAAAAAAAAAAA
+Q: pqdict({<geocomp.voronoi.fortune.Event object at 0x7f5a7a446ba8>: 7.0, <geocomp.voronoi.fortune.Event object at 0x7f5a7a446d30>: 6.0, <geocomp.voronoi.fortune.Event object at 0x7f5a7a446898>: 5.0, <geocomp.voronoi.fortune.Event object at 0x7f5a7a446e48>: 4.0})
+T: <Node: (5, 10), (3, 9)>		=> father: None
+<Leaf: (5, 10)>		=> pred: None succ: <Node: (5, 10), (3, 9)>
+<Node: (3, 9), (5, 10)>		=> father: <Node: (5, 10), (3, 9)>
+<Leaf: (3, 9)>		=> pred: <Node: (5, 10), (3, 9)> succ: <Node: (3, 9), (5, 10)>
+<Node: (5, 10), (7, 8)>		=> father: <Node: (3, 9), (5, 10)>
+<Leaf: (5, 10)>		=> pred: <Node: (3, 9), (5, 10)> succ: <Node: (5, 10), (7, 8)>
+<Node: (7, 8), (5, 10)>		=> father: <Node: (5, 10), (7, 8)>
+<Leaf: (7, 8)>		=> pred: <Node: (5, 10), (7, 8)> succ: <Node: (7, 8), (5, 10)>
+<Leaf: (5, 10)>		=> pred: <Node: (7, 8), (5, 10)> succ: None
+
+
+----------------
+(1.0, 7.0) evento ponto
+[-6.477225575051661, 4.477225575051661]
+f: <Leaf: (5, 10)>
+EEEEEEEEEEEEEEEEEEE
+Q: pqdict({<geocomp.voronoi.fortune.Event object at 0x7f5a7a446d30>: 6.0, <geocomp.voronoi.fortune.Event object at 0x7f5a7a446e48>: 4.0, <geocomp.voronoi.fortune.Event object at 0x7f5a7a446898>: 5.0})
+T: <Node: (5, 10), (3, 9)>		=> father: None
+<Node: (5, 10), (1, 7)>		=> father: <Node: (5, 10), (3, 9)>
+<Node: (3, 9), (5, 10)>		=> father: <Node: (5, 10), (3, 9)>
+<Leaf: (5, 10)>		=> pred: None succ: <Node: (5, 10), (1, 7)>
+<Node: (1, 7), (5, 10)>		=> father: <Node: (5, 10), (1, 7)>
+<Leaf: (3, 9)>		=> pred: <Node: (5, 10), (3, 9)> succ: <Node: (3, 9), (5, 10)>
+<Node: (5, 10), (7, 8)>		=> father: <Node: (3, 9), (5, 10)>
+<Leaf: (1, 7)>		=> pred: <Node: (5, 10), (1, 7)> succ: <Node: (1, 7), (5, 10)>
+<Leaf: (5, 10)>		=> pred: <Node: (1, 7), (5, 10)> succ: <Node: (5, 10), (3, 9)>
+<Leaf: (5, 10)>		=> pred: <Node: (3, 9), (5, 10)> succ: <Node: (5, 10), (7, 8)>
+<Node: (7, 8), (5, 10)>		=> father: <Node: (5, 10), (7, 8)>
+<Leaf: (7, 8)>		=> pred: <Node: (5, 10), (7, 8)> succ: <Node: (7, 8), (5, 10)>
+<Leaf: (5, 10)>		=> pred: <Node: (7, 8), (5, 10)> succ: None
+
+
+----------------
+(8.0, 6.0) evento ponto
+[-10.745966692414834, 4.745966692414834]
+[4.745966692414834, -10.745966692414834]
+[5.0, 13.0]
+[13.0, 5.0]
+f: <Leaf: (5, 10)>
+AAAAAAAAAAAAAAAAAAA
+Q: pqdict({<geocomp.voronoi.fortune.Event object at 0x7f5a7a446898>: 5.0, <geocomp.voronoi.fortune.Event object at 0x7f5a7a446e48>: 4.0})
+T: <Node: (5, 10), (3, 9)>		=> father: None
+<Node: (5, 10), (1, 7)>		=> father: <Node: (5, 10), (3, 9)>
+<Node: (3, 9), (5, 10)>		=> father: <Node: (5, 10), (3, 9)>
+<Leaf: (5, 10)>		=> pred: None succ: <Node: (5, 10), (1, 7)>
+<Node: (1, 7), (5, 10)>		=> father: <Node: (5, 10), (1, 7)>
+<Leaf: (3, 9)>		=> pred: <Node: (5, 10), (3, 9)> succ: <Node: (3, 9), (5, 10)>
+<Node: (5, 10), (7, 8)>		=> father: <Node: (3, 9), (5, 10)>
+<Leaf: (1, 7)>		=> pred: <Node: (5, 10), (1, 7)> succ: <Node: (1, 7), (5, 10)>
+<Leaf: (5, 10)>		=> pred: <Node: (1, 7), (5, 10)> succ: <Node: (5, 10), (3, 9)>
+<Leaf: (5, 10)>		=> pred: <Node: (3, 9), (5, 10)> succ: <Node: (5, 10), (7, 8)>
+<Node: (7, 8), (5, 10)>		=> father: <Node: (5, 10), (7, 8)>
+<Leaf: (7, 8)>		=> pred: <Node: (5, 10), (7, 8)> succ: <Node: (7, 8), (5, 10)>
+<Node: (5, 10), (8, 6)>		=> father: <Node: (7, 8), (5, 10)>
+<Leaf: (5, 10)>		=> pred: <Node: (7, 8), (5, 10)> succ: <Node: (5, 10), (8, 6)>
+<Node: (8, 6), (5, 10)>		=> father: <Node: (5, 10), (8, 6)>
+<Leaf: (8, 6)>		=> pred: <Node: (5, 10), (8, 6)> succ: <Node: (8, 6), (5, 10)>
+<Leaf: (5, 10)>		=> pred: <Node: (8, 6), (5, 10)> succ: None
+
+
+----------------
+(4.5, 5.0) evento ponto
+[-15.0, 5.0]
+[-6.937129433613966, 3.6037961002806322]
+[3.6037961002806322, -6.937129433613966]
+f: <Leaf: (5, 10)>
+AAAAAAAAAAAAAAAAAAA
+EEEEEEEEEEEEEEEEEEE
+Q: pqdict({<geocomp.voronoi.fortune.Event object at 0x7f5a7a446e48>: 4.0})
+T: <Node: (5, 10), (3, 9)>		=> father: None
+<Node: (5, 10), (1, 7)>		=> father: <Node: (5, 10), (3, 9)>
+<Node: (3, 9), (5, 10)>		=> father: <Node: (5, 10), (3, 9)>
+<Leaf: (5, 10)>		=> pred: None succ: <Node: (5, 10), (1, 7)>
+<Node: (1, 7), (5, 10)>		=> father: <Node: (5, 10), (1, 7)>
+<Leaf: (3, 9)>		=> pred: <Node: (5, 10), (3, 9)> succ: <Node: (3, 9), (5, 10)>
+<Node: (5, 10), (7, 8)>		=> father: <Node: (3, 9), (5, 10)>
+<Leaf: (1, 7)>		=> pred: <Node: (5, 10), (1, 7)> succ: <Node: (1, 7), (5, 10)>
+<Node: (5, 10), (4, 5)>		=> father: <Node: (1, 7), (5, 10)>
+<Leaf: (5, 10)>		=> pred: <Node: (3, 9), (5, 10)> succ: <Node: (5, 10), (7, 8)>
+<Node: (7, 8), (5, 10)>		=> father: <Node: (5, 10), (7, 8)>
+<Leaf: (5, 10)>		=> pred: <Node: (1, 7), (5, 10)> succ: <Node: (5, 10), (4, 5)>
+<Node: (4, 5), (5, 10)>		=> father: <Node: (5, 10), (4, 5)>
+<Leaf: (7, 8)>		=> pred: <Node: (5, 10), (7, 8)> succ: <Node: (7, 8), (5, 10)>
+<Node: (5, 10), (8, 6)>		=> father: <Node: (7, 8), (5, 10)>
+<Leaf: (4, 5)>		=> pred: <Node: (5, 10), (4, 5)> succ: <Node: (4, 5), (5, 10)>
+<Leaf: (5, 10)>		=> pred: <Node: (4, 5), (5, 10)> succ: <Node: (5, 10), (3, 9)>
+<Leaf: (5, 10)>		=> pred: <Node: (7, 8), (5, 10)> succ: <Node: (5, 10), (8, 6)>
+<Node: (8, 6), (5, 10)>		=> father: <Node: (5, 10), (8, 6)>
+<Leaf: (8, 6)>		=> pred: <Node: (5, 10), (8, 6)> succ: <Node: (8, 6), (5, 10)>
+<Leaf: (5, 10)>		=> pred: <Node: (8, 6), (5, 10)> succ: None
+
+
+----------------
+(4.0, 4.0) evento ponto
+[-19.24744871391589, 5.24744871391589]
+[-10.071067811865476, 4.0710678118654755]
+f: <Leaf: (5, 10)>
+EEEEEEEEEEEEEEEEEEE
+Q: pqdict({})
+T: <Node: (5, 10), (3, 9)>		=> father: None
+<Node: (5, 10), (1, 7)>		=> father: <Node: (5, 10), (3, 9)>
+<Node: (3, 9), (5, 10)>		=> father: <Node: (5, 10), (3, 9)>
+<Node: (5, 10), (4, 4)>		=> father: <Node: (5, 10), (1, 7)>
+<Node: (1, 7), (5, 10)>		=> father: <Node: (5, 10), (1, 7)>
+<Leaf: (3, 9)>		=> pred: <Node: (5, 10), (3, 9)> succ: <Node: (3, 9), (5, 10)>
+<Node: (5, 10), (7, 8)>		=> father: <Node: (3, 9), (5, 10)>
+<Leaf: (5, 10)>		=> pred: None succ: <Node: (5, 10), (4, 4)>
+<Node: (4, 4), (5, 10)>		=> father: <Node: (5, 10), (4, 4)>
+<Leaf: (1, 7)>		=> pred: <Node: (5, 10), (1, 7)> succ: <Node: (1, 7), (5, 10)>
+<Node: (5, 10), (4, 5)>		=> father: <Node: (1, 7), (5, 10)>
+<Leaf: (5, 10)>		=> pred: <Node: (3, 9), (5, 10)> succ: <Node: (5, 10), (7, 8)>
+<Node: (7, 8), (5, 10)>		=> father: <Node: (5, 10), (7, 8)>
+<Leaf: (4, 4)>		=> pred: <Node: (5, 10), (4, 4)> succ: <Node: (4, 4), (5, 10)>
+<Leaf: (5, 10)>		=> pred: <Node: (4, 4), (5, 10)> succ: <Node: (5, 10), (1, 7)>
+<Leaf: (5, 10)>		=> pred: <Node: (1, 7), (5, 10)> succ: <Node: (5, 10), (4, 5)>
+<Node: (4, 5), (5, 10)>		=> father: <Node: (5, 10), (4, 5)>
+<Leaf: (7, 8)>		=> pred: <Node: (5, 10), (7, 8)> succ: <Node: (7, 8), (5, 10)>
+<Node: (5, 10), (8, 6)>		=> father: <Node: (7, 8), (5, 10)>
+<Leaf: (4, 5)>		=> pred: <Node: (5, 10), (4, 5)> succ: <Node: (4, 5), (5, 10)>
+<Leaf: (5, 10)>		=> pred: <Node: (4, 5), (5, 10)> succ: <Node: (5, 10), (3, 9)>
+<Leaf: (5, 10)>		=> pred: <Node: (7, 8), (5, 10)> succ: <Node: (5, 10), (8, 6)>
+<Node: (8, 6), (5, 10)>		=> father: <Node: (5, 10), (8, 6)>
+<Leaf: (8, 6)>		=> pred: <Node: (5, 10), (8, 6)> succ: <Node: (8, 6), (5, 10)>
+<Leaf: (5, 10)>		=> pred: <Node: (8, 6), (5, 10)> succ: None
+
+
+----------------
+fim do Voronoi
