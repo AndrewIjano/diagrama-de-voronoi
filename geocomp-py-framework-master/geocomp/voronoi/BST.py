@@ -1,9 +1,5 @@
 import math
-from geocomp.common.point import Point
-
-from geocomp.common import control
-from geocomp.common.guiprim import *
-from geocomp.common.segment import Segment
+from point import Point
 
 class Node():
     """Implementa um nó interno"""
