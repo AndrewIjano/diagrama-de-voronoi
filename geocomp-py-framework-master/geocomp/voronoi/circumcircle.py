@@ -39,6 +39,8 @@ def distance(p1, p2):
 
 def circumcenter(p1, p2, p3):
     """Encontra o cicuncentro de três pontos"""
+    print('IIIIIIIIIIIIIIIIIIIIIII circumcircle')
+    print(f'{p1.x}, {p1.y}  {p2.x}, {p2.y}  {p3.x},{p3.y}')
     mid1 = mid_point(p1, p2)
     mid2 = mid_point(p2, p3)
 

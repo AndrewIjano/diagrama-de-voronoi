@@ -7,10 +7,11 @@ from geocomp.common.segment import Segment
 
 class Node():
     """Implementa um nó interno"""
-    def __init__(self, left_leaf, right_leaf):
+    def __init__(self, left_leaf, right_leaf, root_number=None):
         self.p_i = left_leaf
         self.p_j = right_leaf
         self.right = self.left = self.hedge = self.father = None
+        self.root_number = root_number
 
     def __repr__(self):
         return f'<Node: ({int(self.p_i.point.x)}, {int(self.p_i.point.y)}), ({int(self.p_j.point.x)}, {int(self.p_j.point.y)})>'
@@ -45,9 +46,27 @@ class BST():
             if isinstance(node, Leaf):
                 return node
 
-            x_breakpoint = get_x_breakpoint(node, point.y)
+            i, j = node.p_i.point, node.p_j.point
+            print(f'p_1: ({i.x},{i.y})', f'p_j:({j.x}, {j.y})')
+            x_breakpoints = get_x_breakpoints(node, point.y)
+            print('root_number:', node.root_number)
+            print('point:', f'({point.x}, {point.y})')
+            # x_breakpoint = x_breakpoints[node.root_number]
+            d_pi0 = derivada_parabola(i, point.y, x_breakpoints[0])
+            d_pj0 = derivada_parabola(j, point.y, x_breakpoints[0])
+
+            if d_pi0 < d_pj0:
+                x_breakpoint = x_breakpoints[1]
+            elif d_pi0 > d_pj0:
+                x_breakpoint = x_breakpoints[0]
+            else:
+                print('DEU IGUAL')
+
+            print('x_breakpoint:', x_breakpoint)
             if point.x < x_breakpoint:
+                print('LEFT')
                 return inner_search(node.left, point)
+            print('RIGHT')
             return inner_search(node.right, point)
 
         return inner_search(self.root, point)
@@ -65,8 +84,8 @@ class BST():
         left_split = Leaf(leaf.point)
         right_split = Leaf(leaf.point)
 
-        new_tree = Node(left_split, new_leaf)
-        new_node = Node(new_leaf, right_split)
+        new_tree = Node(left_split, new_leaf, 0)
+        new_node = Node(new_leaf, right_split, 1)
 
         left_split.pred, left_split.succ   = leaf.pred, new_tree
         right_split.pred, right_split.succ = new_node, leaf.succ
@@ -93,6 +112,9 @@ class BST():
         else:
             # print('root')
             self.root = new_tree
+
+        # new_tree.root_number = 0
+        # new_leaf.root_number = 1
         # print('split_and_insert: new_tree:', new_tree, 'new_leaf:', new_leaf, 'new_node:', new_node)
         # print(self.all_leaves())
         # print()
@@ -122,7 +144,7 @@ class BST():
 
         def remove_circle_event(leaf, Q):
             if leaf.event is not None:
-                print('remove event:', repr(leaf.event))
+                # print('remove event:', repr(leaf.event))
                 Q.updateitem(leaf.event, math.inf)
                 Q.pop()
                 leaf.event.point.unplot()
@@ -148,6 +170,7 @@ class BST():
         new_node.father = subst.father
         new_node.left = subst.left
         new_node.right = subst.right
+        new_node.root_number = subst.root_number
         substitute_node(subst, new_node)
         substitute_father(subst.left, new_node)
         substitute_father(subst.right, new_node)
@@ -183,11 +206,12 @@ class BST():
             #     count = 0
             #     div *= 2
             if isinstance(n, Node):
-                string += '\t\t=> father: ' + repr(n.father)
+                # string += '\t\t=> father: ' + repr(n.father) + ' root_number:' + str(n.root_number)
                 queue.append(n.left)
                 queue.append(n.right)
             else:
-                string += '\t\t=> pred: ' + repr(n.pred) + ' succ: ' + repr(n.succ)
+                pass
+                # string += '\t\t=> pred: ' + repr(n.pred) + ' succ: ' + repr(n.succ)
             string += '\n'
             count += 1
         return string
@@ -195,7 +219,10 @@ class BST():
     def __str__(self):
         return self._str_children(self.root)
 
-def get_x_breakpoint(node, line_y):
+def derivada_parabola(p, line_y, x_breakpoint):
+    return (x_breakpoint - p.x)/(p.y - line_y)
+
+def get_x_breakpoints(node, line_y):
     """ Calcula a coordenada x do breakpoint dado a tupla de pontos
     e a posição y da linha de varredura
     """
@@ -240,7 +267,10 @@ def get_x_breakpoint(node, line_y):
     if i.y != line_y and j.y != line_y:
         for p in points_i: p.unplot()
         for p in points_j: p.unplot()
-
-    if len(roots) == 1 or i.x <= roots[0] <= j.x:
-        return roots[0]
-    return roots[1]
+    print('roots:', roots)
+    roots.sort()
+    return roots
+    # if
+    # if len(roots) == 1 or i.x <= roots[0] <= j.x:
+    #     return roots[0]
+    # return roots[1]

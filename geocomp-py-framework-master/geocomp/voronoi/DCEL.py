@@ -1,29 +1,31 @@
+from geocomp.common.segment import Segment
 
 class Vertex():
     """Implementa um vértice 2D de uma DCEL"""
 
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
+    def __init__(self, p):
+        self.p  = p
         self.hedge = None
 
-    def add_hedge(hedge):
+    def add_hedge(self, hedge):
         self.hedge = hedge
 
     def hedge(self):
         return self.hedge
 
     def __str__(self):
-        return f'<Vertex, ({self.x},{self.y})>'
+        return f'<Vertex, ({self.p.x},{self.p.y})>'
 
 class Hedge():
     """Implementa uma meia-aresta de uma DCEL"""
 
     def __init__(self, u, v):
         self.origin = u
+        self.dest = v
         self.twin = None
         self.face = None
         self.next_hedge = None
+        self.segment = Segment()
 
     def previous_hedge(self):
         return self.twin.next_hedge
@@ -73,7 +75,7 @@ class Face():
 
 class DCEL():
     """Implementa uma Double-Connected Edge List"""
-    
+
     def __init__(self):
         self.vertices = []
         self.hedges = []

@@ -65,7 +65,7 @@ def sleep (amount = None):
 	if dont_sleep == 0:
 		gui.sleep ()
 
-################### ANDREW E EDUARDO MUDARAM #######################
+
 def plot_disc (x, y, color, r):
 	"""desenha um disco de centro (x,y), raio r e cor color na tela"""
 	if skip: return 0
@@ -73,28 +73,26 @@ def plot_disc (x, y, color, r):
 	update ()
 	return plot_id
 
-def plot_curve (xy, color=config.COLOR_LINE, linewidth = config.LINEWIDTH):
-	"""desenha uma curva com uma lista de coordenadas xy"""
+def plot_segment (x0, y0, x1, y1, color=config.COLOR_LINE, linewidth = config.LINEWIDTH):
+	"""desenha um segmento que vai de (x0,y0) ate (x1,y1) de cor color"""
 	if skip: return 0
-	plot_id = gui.plot_curve (xy, color, linewidth)
+	plot_id = gui.plot_segment (x0, y0, x1, y1, color, linewidth)
 	update ()
 	return plot_id
-#####################################################################
 
-def plot_circle (x, y, color, r):
-	"""desenha um circulo de centro (x,y), raio r e cor color na tela"""
+def plot_ray (x0, y0, x1, y1, color=config.COLOR_LINE, linewidth = config.LINEWIDTH):
+	"""desenha uma semi-reta que parte de (x0,y0) e passa por (x1,y1) de cor color"""
 	if skip: return 0
-	plot_id = gui.plot_circle (x, y, color, r)
+	plot_id = gui.plot_ray (x0, y0, x1, y1, color, linewidth)
 	update ()
 	return plot_id
 
 def plot_line (x0, y0, x1, y1, color=config.COLOR_LINE, linewidth = config.LINEWIDTH):
-	"""desenha uma linha que vai de (x0,y0) ate (x1,y1) de cor color"""
+	"""desenha uma reta que passa por (x0,y0) e (x1,y1) de cor color"""
 	if skip: return 0
 	plot_id = gui.plot_line (x0, y0, x1, y1, color, linewidth)
 	update ()
 	return plot_id
-
 
 def plot_vert_line (x, color=config.COLOR_LINE_SPECIAL,
 			linewidth=config.LINEWIDTH_SPECIAL):
@@ -105,12 +103,20 @@ def plot_vert_line (x, color=config.COLOR_LINE_SPECIAL,
 	return plot_id
 
 # hmm... eu nao uso isso em lugar algum => nao foi testado...
-# usei => funciona
 def plot_horiz_line (y, color=config.COLOR_LINE_SPECIAL,
 			linewidth=config.LINEWIDTH_SPECIAL):
 	"""desenha uma linha horizontal passando por y, de cor color"""
 	if skip: return 0
 	plot_id = gui.plot_horiz_line (y, color, linewidth)
+	update ()
+	return plot_id
+
+def plot_parabola(y,px,py,startx,endx,steps=50,color=config.COLOR_ALT2,linewidth=config.LINEWIDTH_SPECIAL):
+	# Desenha uma parabola usando a reta horizontal y e o ponto (px,py),
+	# desenhada entre as x-coordenadas startx e endx, gerada usando número de passos steps,
+	# de cor color
+	if skip: return 0
+	plot_id = gui.plot_parabola(y,px,py,startx,endx,steps,color,linewidth)
 	update ()
 	return plot_id
 
@@ -129,3 +135,19 @@ def set_skip (val):
 	"Funcao interna, para (des)ativar as funcoes graficas"
 	global skip
 	skip = val
+################### ANDREW E EDUARDO MUDARAM #######################
+
+def plot_curve (xy, color=config.COLOR_LINE, linewidth = config.LINEWIDTH):
+	"""desenha uma curva com uma lista de coordenadas xy"""
+	if skip: return 0
+	plot_id = gui.plot_curve (xy, color, linewidth)
+	update ()
+	return plot_id
+
+def plot_circle (x, y, color, r):
+	"""desenha um circulo de centro (x,y), raio r e cor color na tela"""
+	if skip: return 0
+	plot_id = gui.plot_circle (x, y, color, r)
+	update ()
+	return plot_id
+#####################################################################
