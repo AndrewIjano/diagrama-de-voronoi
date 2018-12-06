@@ -1,5 +1,6 @@
 import math
-from point import Point
+from geocomp.common.point import Point
+from geocomp.common import control
 
 class Node():
     """Implementa um nó interno"""
