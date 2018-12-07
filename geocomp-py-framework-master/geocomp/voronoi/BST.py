@@ -133,7 +133,7 @@ class BST():
         def remove_circle_event(leaf, Q):
             if leaf.event is not None:
                 # print('remove event:', repr(leaf.event))
-                Q.updateitem(leaf.event, math.inf)
+                Q.updateitem(leaf.event, Point(math.inf, math.inf))
                 Q.pop()
                 leaf.event.point.unplot()
                 leaf.event = None

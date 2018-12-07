@@ -53,17 +53,23 @@ class Hedge():
         self.next_hedge = hedge
 
     def update_origin(self, vertex):
-        self.origin = vertex
+        if isinstance(vertex, Point):
+            vertex = Vertex(vertex)
+
+        self.origin.p = vertex.p
         self.segment.init = vertex.p
 
-        self.twin.dest = vertex
+        self.twin.dest.p = vertex.p
         self.twin.segment.to = vertex.p
 
     def update_dest(self, vertex):
-        self.dest = vertex
+        if isinstance(vertex, Point):
+            vertex = Vertex(vertex)
+
+        self.dest.p = vertex.p
         self.segment.to = vertex.p
 
-        self.twin.origin = vertex
+        self.twin.origin.p = vertex.p
         self.twin.segment.init = vertex.p
 
     def __str__(self):
@@ -99,7 +105,7 @@ class DCEL():
     def add_vertex(self, vertex):
         if isinstance(vertex, Point):
             vertex = Vertex(vertex)
-
+        vertex.p.plot('red', 5)
         self.vertices.append(vertex)
         return vertex
 

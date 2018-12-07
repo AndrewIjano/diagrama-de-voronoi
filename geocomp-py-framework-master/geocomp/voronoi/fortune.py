@@ -11,13 +11,14 @@ from geocomp.common.point import Point
 from geocomp.common.segment import Segment
 from geocomp.voronoi.DCEL import DCEL, Vertex, Hedge, Face
 from geocomp.voronoi.BST import BST, get_x_breakpoints, derivada_parabola
-from geocomp.voronoi.circumcircle import circumcenter, distance, mid_point, get_line, perp_slope, get_line_from_slope
+from geocomp.voronoi.circumcircle import *
 import math
-
 from geocomp import config
 
+FORTUNE_EPS = 1e-6
+
 class Event():
-	def __init__(self, point, is_site_event, leaf=None, center=None):
+	def __init__(self, point, is_site_event=None, leaf=None, center=None):
 		self.point = point
 		self.is_site_event = is_site_event
 		self.leaf = leaf
@@ -25,6 +26,7 @@ class Event():
 
 	def __str__(self):
 		return f'({self.point.x}, {self.point.y})'
+
 
 def final_plot(leaves, hedges, line_y):
 	for h in hedges:
@@ -41,7 +43,7 @@ def final_unplot(par_plots, hedges):
 
 def event_queue(P):
 	events = [Event(p, True) for p in P]
-	Q = pqdict({e : e.point.y for e in events}, reverse=True)
+	Q = pqdict({e : e.point for e in events}, reverse=True)
 	return Q
 
 def Fortune(P):
@@ -87,20 +89,15 @@ def handle_site_event(q, T, Q, V):
 		f = T.search(q)
 		if f.event is not None:
 			f.event.point.unplot()
-			Q.updateitem(f.event, math.inf)
+			Q.updateitem(f.event, Point(math.inf, math.inf))
 			Q.pop()
 			f.event = None
 
 		u, f, v = T.split_and_insert(f, q)
 
-		# print('pontos analisados:', f'({u.p_i.point.x}, {u.p_i.point.y}) ({u.p_j.point.x}, {u.p_j.point.y})')
-		mid1 = mid_point(u.p_i.point, u.p_j.point)
-		slope1 = perp_slope(get_line(u.p_i.point, u.p_j.point))
-		bissect_line = lambda x : slope1*x + mid1.y - mid1.x*slope1
-
+		bissect_line = bissect_line_function(u)
 		v_1 = V.add_vertex(Point(-200, bissect_line(-200)))
 		v_2 = V.add_vertex(Point(200, bissect_line(200)))
-		# print('- ', (p1.x, p1.y) , (p2.x, p2.y))
 
 		h_12 = Hedge(v_1, v_2)
 		V.add_hedge(h_12)
@@ -126,33 +123,44 @@ def handle_circle_event(q, T, Q, V):
 
 	u = V.add_vertex(q.center)
 
-	if abs(pred.hedge.segment.to.x) == 200:
-		pred.hedge.update_origin(u)
-	else:
-		pred.hedge.update_dest(u)
 
-	if abs(succ.hedge.segment.to.x) == 200:
-		succ.hedge.update_origin(u)
+	pred.hedge.update_origin(u)
+	x_breakpoints = get_x_breakpoints(pred, q.point.y)
+	# print(x_breakpoints)
+	# print(q.center.x)
+	bissec_pred = bissect_line_function(pred)
+	if math.isclose(x_breakpoints[0], q.center.x, rel_tol=FORTUNE_EPS):
+		point_pred = Point(200, bissec_pred(200))
 	else:
-		succ.hedge.update_dest(u)
+		point_pred = Point(-200, bissec_pred(-200))
 
-	# print('evento circulo')
+	if abs(pred.hedge.dest.p.x) == 200:
+		pred.hedge.update_dest(point_pred)
+
+
+	succ.hedge.update_origin(u)
+	x_breakpoints = get_x_breakpoints(succ, q.point.y)
+	bissec_succ = bissect_line_function(succ)
+	if math.isclose(x_breakpoints[0], q.center.x, rel_tol=FORTUNE_EPS):
+		point_succ = Point(200, bissec_succ(200))
+	else:
+		point_succ = Point(-200, bissec_succ(-200))
+
+	if abs(succ.hedge.dest.p.x) == 200:
+		succ.hedge.update_dest(point_succ)
+
 	mid1 = mid_point(left_leaf.point, right_leaf.point)
 	slope1 = perp_slope(get_line(left_leaf.point, right_leaf.point))
 	# bissect_line = lambda x : slope1*x + mid1.y - mid1.x*slope1
 	bissect_line = lambda y : (y - mid1.y)/slope1 + mid1.x
-	# if mid1.x > q.center.x:
-	# 	p = Point(-200, bissect_line(-200))
-	# else:
-	# 	p = Point(200, bissect_line(200))
 
 	v = V.add_vertex(Point(bissect_line(-200), -200))
-	h_uv = Hedge(u, v)
-	V.add_hedge(h_uv)
-	new_node.hedge = h_uv
-
 	h_vu = Hedge(v, u)
 	V.add_hedge(h_vu)
+	new_node.hedge = h_vu
+
+	h_uv = Hedge(u, v)
+	V.add_hedge(h_uv)
 
 	h_uv.add_twin(h_vu)
 
@@ -184,11 +192,11 @@ def add_circle_event(leaf1, leaf2, leaf3, q, Q):
 	radius = distance(center, p1)
 	circle = control.plot_circle(center.x, center.y, 'blue', radius)
 
-	if center.y - radius < q.y:
+	if center.y - radius < q.y - FORTUNE_EPS or ( math.isclose(center.y - radius, q.y) and center.x - radius > q.x + FORTUNE_EPS):
 		point = Point(center.x, center.y - radius)
-		print('------ cria evento circulo: ', leaf2)
+		print('------ cria evento circulo: ', leaf2, f'({center.x}, {center.y})')
 		leaf2.event = Event(point, False, leaf2, center)
-		Q.additem(leaf2.event, leaf2.event.point.y)
+		Q.additem(leaf2.event, point)
 		point.plot(color='cyan')
 
 	control.sleep()

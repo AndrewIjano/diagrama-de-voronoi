@@ -37,6 +37,12 @@ def distance(p1, p2):
     """Retorna a distância entre dois pontos"""
     return math.sqrt((p2.x - p1.x)**2 + (p2.y - p1.y)**2)
 
+def bissect_line_function(node):
+    mid = mid_point(node.p_i.point, node.p_j.point)
+    slope = perp_slope(get_line(node.p_i.point, node.p_j.point))
+
+    return lambda x : slope*x + mid.y - mid.x*slope
+
 def circumcenter(p1, p2, p3):
     """Encontra o cicuncentro de três pontos"""
     mid1 = mid_point(p1, p2)
