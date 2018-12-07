@@ -1,6 +1,8 @@
 # diagrama-de-voronoi
 Implementa uma versão interativa do algoritmo de Fortune para criar um diagrama de Voronoi. Projeto da disciplina de Geometria Computacional do IME
 
+Na implementação foi usada a [framework](https://gitlab.com/visportella/geocomp-py-framework) desenvolvida por Alexis Sakurai Landgraf e Victor Portella.
+
 ## Informações sobre o framework usado
 
 Esse programa implementa os seguintes algoritmos para o problema do
