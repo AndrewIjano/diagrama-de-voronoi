@@ -39,8 +39,6 @@ def distance(p1, p2):
 
 def circumcenter(p1, p2, p3):
     """Encontra o cicuncentro de três pontos"""
-    print('IIIIIIIIIIIIIIIIIIIIIII circumcircle')
-    print(f'{p1.x}, {p1.y}  {p2.x}, {p2.y}  {p3.x},{p3.y}')
     mid1 = mid_point(p1, p2)
     mid2 = mid_point(p2, p3)
 
@@ -53,23 +51,22 @@ def circumcenter(p1, p2, p3):
     bissect1 = get_line_from_slope(perp1, mid1)
     bissect2 = get_line_from_slope(perp2, mid2)
 
-    f1 = lambda x : bissect1[0] * x + bissect1[1]
-    f2 = lambda x : bissect2[0] * x + bissect2[1]
-
-    p1, p2 = Point(-100, f1(-100)), Point(100, f1(100))
-    p1.lineto(p2)
-
-    p3, p4 = Point(-100, f2(-100)), Point(100, f2(100))
-    p3.lineto(p4)
+    # f1 = lambda x : bissect1[0] * x + bissect1[1]
+    # f2 = lambda x : bissect2[0] * x + bissect2[1]
+    #
+    # p1, p2 = Point(-100, f1(-100)), Point(100, f1(100))
+    # p1.lineto(p2)
+    #
+    # p3, p4 = Point(-100, f2(-100)), Point(100, f2(100))
+    # p3.lineto(p4)
 
     inter = intersection(bissect1, bissect2)
 
-    inter.plot()
-    control.sleep()
-    control.thaw_update()
-    control.update()
-
-    p1.remove_lineto(p2)
-    p3.remove_lineto(p4)
-    inter.unplot()
+    # inter.plot()
+    # control.sleep()
+    # control.update()
+    #
+    # p1.remove_lineto(p2)
+    # p3.remove_lineto(p4)
+    # inter.unplot()
     return inter

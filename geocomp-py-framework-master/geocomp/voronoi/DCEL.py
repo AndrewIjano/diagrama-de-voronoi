@@ -1,5 +1,5 @@
 from geocomp.common.segment import Segment
-
+from geocomp.common.point import Point
 class Vertex():
     """Implementa um vértice 2D de uma DCEL"""
 
@@ -25,7 +25,7 @@ class Hedge():
         self.twin = None
         self.face = None
         self.next_hedge = None
-        self.segment = Segment()
+        self.segment = Segment(u.p, v.p)
 
     def previous_hedge(self):
         return self.twin.next_hedge
@@ -44,12 +44,27 @@ class Hedge():
 
     def add_twin(self, hedge):
         self.twin = hedge
+        hedge.twin = self
 
     def add_face(self, face):
         self.face = face
 
     def add_next_hedge(self, hedge):
         self.next_hedge = hedge
+
+    def update_origin(self, vertex):
+        self.origin = vertex
+        self.segment.init = vertex.p
+
+        self.twin.dest = vertex
+        self.twin.segment.to = vertex.p
+
+    def update_dest(self, vertex):
+        self.dest = vertex
+        self.segment.to = vertex.p
+
+        self.twin.origin = vertex
+        self.twin.segment.init = vertex.p
 
     def __str__(self):
         return f'<Hedge, '               +\
@@ -82,7 +97,11 @@ class DCEL():
         self.faces = []
 
     def add_vertex(self, vertex):
+        if isinstance(vertex, Point):
+            vertex = Vertex(vertex)
+
         self.vertices.append(vertex)
+        return vertex
 
     def add_hedge(self, hedge):
         self.hedges.append(hedge)

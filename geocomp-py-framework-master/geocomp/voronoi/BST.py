@@ -4,11 +4,10 @@ from geocomp.common import control
 
 class Node():
     """Implementa um nó interno"""
-    def __init__(self, left_leaf, right_leaf, root_number=None):
+    def __init__(self, left_leaf, right_leaf):
         self.p_i = left_leaf
         self.p_j = right_leaf
         self.right = self.left = self.hedge = self.father = None
-        self.root_number = root_number
 
     def __repr__(self):
         return f'<Node: ({int(self.p_i.point.x)}, {int(self.p_i.point.y)}), ({int(self.p_j.point.x)}, {int(self.p_j.point.y)})>'
@@ -46,9 +45,7 @@ class BST():
             i, j = node.p_i.point, node.p_j.point
             print(f'p_1: ({i.x},{i.y})', f'p_j:({j.x}, {j.y})')
             x_breakpoints = get_x_breakpoints(node, point.y)
-            print('root_number:', node.root_number)
             print('point:', f'({point.x}, {point.y})')
-            # x_breakpoint = x_breakpoints[node.root_number]
             d_pi0 = derivada_parabola(i, point.y, x_breakpoints[0])
             d_pj0 = derivada_parabola(j, point.y, x_breakpoints[0])
 
@@ -81,8 +78,8 @@ class BST():
         left_split = Leaf(leaf.point)
         right_split = Leaf(leaf.point)
 
-        new_tree = Node(left_split, new_leaf, 0)
-        new_node = Node(new_leaf, right_split, 1)
+        new_tree = Node(left_split, new_leaf)
+        new_node = Node(new_leaf, right_split)
 
         left_split.pred, left_split.succ   = leaf.pred, new_tree
         right_split.pred, right_split.succ = new_node, leaf.succ
@@ -110,12 +107,6 @@ class BST():
             # print('root')
             self.root = new_tree
 
-        # new_tree.root_number = 0
-        # new_leaf.root_number = 1
-        # print('split_and_insert: new_tree:', new_tree, 'new_leaf:', new_leaf, 'new_node:', new_node)
-        # print(self.all_leaves())
-        # print()
-        # print('split_and_insert: L_right:', new_node.right, new_node.right.pred, new_node.right.succ)
         return new_tree, new_leaf, new_node
 
     def remove(self, leaf, Q):
@@ -167,7 +158,6 @@ class BST():
         new_node.father = subst.father
         new_node.left = subst.left
         new_node.right = subst.right
-        new_node.root_number = subst.root_number
         substitute_node(subst, new_node)
         substitute_father(subst.left, new_node)
         substitute_father(subst.right, new_node)
@@ -199,15 +189,11 @@ class BST():
         while len(queue) > 0:
             n = queue.pop(0)
             string += repr(n)
-            # if count % div == 0:
-            #     count = 0
-            #     div *= 2
             if isinstance(n, Node):
-                # string += '\t\t=> father: ' + repr(n.father) + ' root_number:' + str(n.root_number)
+                # string += '\t\t=> father: ' + repr(n.father)
                 queue.append(n.left)
                 queue.append(n.right)
-            else:
-                pass
+            # else:
                 # string += '\t\t=> pred: ' + repr(n.pred) + ' succ: ' + repr(n.succ)
             string += '\n'
             count += 1
@@ -224,14 +210,14 @@ def get_x_breakpoints(node, line_y):
     e a posição y da linha de varredura
     """
     i, j = node.p_i.point, node.p_j.point
-    if i.y != line_y and j.y != line_y:
-        g = lambda h : lambda x : (x**2 - 2*h.x*x + h.x**2 + h.y**2- line_y**2)/(2*(h.y - line_y))
-        f_i, f_j = g(i), g(j)
-        points_i = [Point(x/50, f_i(x/50)) for x in range(-500, 500)]
-        points_j = [Point(x/50, f_j(x/50)) for x in range(-500, 500)]
-
-        for p in points_i: p.plot(color='cyan', radius=1)
-        for p in points_j: p.plot(color='yellow', radius=1)
+    # if i.y != line_y and j.y != line_y:
+    #     g = lambda h : lambda x : (x**2 - 2*h.x*x + h.x**2 + h.y**2- line_y**2)/(2*(h.y - line_y))
+    #     f_i, f_j = g(i), g(j)
+    #     points_i = [Point(x/50, f_i(x/50)) for x in range(-500, 500)]
+    #     points_j = [Point(x/50, f_j(x/50)) for x in range(-500, 500)]
+    #
+    #     for p in points_i: p.plot(color='cyan', radius=1)
+    #     for p in points_j: p.plot(color='yellow', radius=1)
 
     a = j.y - i.y
     b = 2 * (j.x*i.y - i.x*j.y + line_y * (i.x - j.x))
@@ -246,24 +232,24 @@ def get_x_breakpoints(node, line_y):
         roots += [(-b + math.sqrt(delta))/(2*a)]
 
     roots += [(-b - math.sqrt(delta))/(2*a)]
-    print(roots)
-    i.hilight(color='cyan')
-    j.hilight(color='yellow')
-    id_1 = control.plot_vert_line(roots[0], color='blue')
-    if len(roots) > 1:
-        id_2 = control.plot_vert_line(roots[1], color='red')
-
-    control.sleep()
-    control.update()
-
-    control.plot_delete(id_1)
-    if len(roots) > 1:
-        control.plot_delete(id_2)
-    i.unhilight()
-    j.unhilight()
-    if i.y != line_y and j.y != line_y:
-        for p in points_i: p.unplot()
-        for p in points_j: p.unplot()
+    # print(roots)
+    # i.hilight(color='cyan')
+    # j.hilight(color='yellow')
+    # id_1 = control.plot_vert_line(roots[0], color='blue')
+    # if len(roots) > 1:
+    #     id_2 = control.plot_vert_line(roots[1], color='red')
+    #
+    # control.sleep()
+    # control.update()
+    #
+    # control.plot_delete(id_1)
+    # if len(roots) > 1:
+    #     control.plot_delete(id_2)
+    # i.unhilight()
+    # j.unhilight()
+    # if i.y != line_y and j.y != line_y:
+    #     for p in points_i: p.unplot()
+    #     for p in points_j: p.unplot()
     print('roots:', roots)
     roots.sort()
     return roots
