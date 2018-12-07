@@ -227,7 +227,7 @@ def get_x_breakpoints(node, line_y):
     roots += [(-b + math.sqrt(delta))/(2*a)]
 
     roots += [(-b - math.sqrt(delta))/(2*a)]
-    print('roots:', roots)
+    # print('roots:', roots)
     roots.sort()
     return roots
 
