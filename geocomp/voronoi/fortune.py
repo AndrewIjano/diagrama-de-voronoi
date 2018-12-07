@@ -1,22 +1,21 @@
 #!/usr/bin/env python
 """Algoritmo de Fortune"""
 
-# from geocomp.common.polygon import Polygon
-from random import randint
+import math
+from pqdict import pqdict
+
+from geocomp import config
 from geocomp.common import control
 from geocomp.common.guiprim import *
-from queue import PriorityQueue
-from pqdict import pqdict
-from geocomp.voronoi.point import Point
 from geocomp.common.segment import Segment
-from geocomp.voronoi.DCEL import DCEL, Vertex, Hedge, Face
-from geocomp.voronoi.BST import BST, get_x_breakpoints, derivada_parabola
+
+from geocomp.voronoi.point import Point
+from geocomp.voronoi.BST import *
+from geocomp.voronoi.DCEL import *
 from geocomp.voronoi.circumcircle import *
-import math
-from geocomp import config
 
 FORTUNE_EPS = 1e-6
-
+FORTUNE_INFINITY = 200
 class Event():
 	def __init__(self, point, is_site_event, leaf=None, center=None):
 		self.point = point
@@ -32,23 +31,38 @@ def final_plot(leaves, hedges, line_y):
 	for h in hedges:
 		h.segment.plot(cor='blue')
 
-	return [control.plot_parabola(line_y, l.point.x, l.point.y, -20, 20, steps=300) for l in leaves]
+	par_plot = []
+	for leaf in leaves:
+		if leaf.pred is not None:
+			pred_breakpoints = get_x_breakpoints(leaf.pred, line_y)
+			startx = choose_x_breakpoint(leaf.pred, pred_breakpoints, line_y)
+		else:
+			startx = -FORTUNE_INFINITY
+
+		if leaf.succ is not None:
+			succ_breakpoints = get_x_breakpoints(leaf.succ, line_y)
+			endx = choose_x_breakpoint(leaf.succ, succ_breakpoints, line_y)
+		else:
+			endx = FORTUNE_INFINITY
+
+		par_plot += [control.plot_parabola(line_y, leaf.point.x, leaf.point.y, startx, endx, steps=400)]
+	return par_plot
 
 def final_unplot(par_plots, hedges):
 	for par in par_plots:
 		control.plot_delete(par)
 
 	for h in hedges:
+		if h.segment.lid is None:
+			continue
 		h.segment.hide()
 
 def event_queue(P):
 	events = [Event(Point(p.x, p.y), True) for p in P]
-	print(events)
 	Q = pqdict({e : e.point for e in events}, reverse=True)
 	return Q
 
 def Fortune(P):
-	print(P)
 	Q = event_queue(P)
 	V = DCEL()
 	T = BST()
@@ -56,6 +70,9 @@ def Fortune(P):
 
 		q = Q.pop()
 		q.point.hilight()
+		par_plots = final_plot(T.all_leaves(), V.hedges, q.point.y)
+		control.sleep()
+
 		sweep = control.plot_horiz_line(q.point.y, color='green')
 		if q.is_site_event:
 			print(f'({q.point.x}, {q.point.y})', 'evento ponto')
@@ -70,8 +87,6 @@ def Fortune(P):
 		print()
 		control.sleep()
 
-		par_plots = final_plot(T.all_leaves(), V.hedges, q.point.y)
-		control.sleep()
 
 		final_unplot(par_plots, V.hedges)
 		control.plot_delete(sweep)
@@ -98,8 +113,8 @@ def handle_site_event(q, T, Q, V):
 		u, f, v = T.split_and_insert(f, q)
 
 		bissect_line = bissect_line_function(u)
-		v_1 = V.add_vertex(Point(-200, bissect_line(-200)))
-		v_2 = V.add_vertex(Point(200, bissect_line(200)))
+		v_1 = V.add_vertex(Point(-FORTUNE_INFINITY, bissect_line(-FORTUNE_INFINITY)))
+		v_2 = V.add_vertex(Point(FORTUNE_INFINITY, bissect_line(FORTUNE_INFINITY)))
 
 		h_12 = Hedge(v_1, v_2)
 		V.add_hedge(h_12)
@@ -132,11 +147,11 @@ def handle_circle_event(q, T, Q, V):
 	# print(q.center.x)
 	bissec_pred = bissect_line_function(pred)
 	if math.isclose(x_breakpoints[0], q.center.x, rel_tol=FORTUNE_EPS):
-		point_pred = Point(200, bissec_pred(200))
+		point_pred = Point(FORTUNE_INFINITY, bissec_pred(FORTUNE_INFINITY))
 	else:
-		point_pred = Point(-200, bissec_pred(-200))
+		point_pred = Point(-FORTUNE_INFINITY, bissec_pred(-FORTUNE_INFINITY))
 
-	if abs(pred.hedge.dest.p.x) == 200:
+	if abs(pred.hedge.dest.p.x) == FORTUNE_INFINITY:
 		pred.hedge.update_dest(point_pred)
 
 
@@ -144,11 +159,11 @@ def handle_circle_event(q, T, Q, V):
 	x_breakpoints = get_x_breakpoints(succ, q.point.y)
 	bissec_succ = bissect_line_function(succ)
 	if math.isclose(x_breakpoints[0], q.center.x, rel_tol=FORTUNE_EPS):
-		point_succ = Point(200, bissec_succ(200))
+		point_succ = Point(FORTUNE_INFINITY, bissec_succ(FORTUNE_INFINITY))
 	else:
-		point_succ = Point(-200, bissec_succ(-200))
+		point_succ = Point(-FORTUNE_INFINITY, bissec_succ(-FORTUNE_INFINITY))
 
-	if abs(succ.hedge.dest.p.x) == 200:
+	if abs(succ.hedge.dest.p.x) == FORTUNE_INFINITY:
 		succ.hedge.update_dest(point_succ)
 
 	mid1 = mid_point(left_leaf.point, right_leaf.point)
@@ -156,7 +171,7 @@ def handle_circle_event(q, T, Q, V):
 	# bissect_line = lambda x : slope1*x + mid1.y - mid1.x*slope1
 	bissect_line = lambda y : (y - mid1.y)/slope1 + mid1.x
 
-	v = V.add_vertex(Point(bissect_line(-200), -200))
+	v = V.add_vertex(Point(bissect_line(-FORTUNE_INFINITY), -FORTUNE_INFINITY))
 	h_vu = Hedge(v, u)
 	V.add_hedge(h_vu)
 	new_node.hedge = h_vu

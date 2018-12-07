@@ -26,6 +26,7 @@ class Hedge():
         self.face = None
         self.next_hedge = None
         self.segment = Segment(u.p, v.p)
+        self.segment.lid = None
 
     def previous_hedge(self):
         return self.twin.next_hedge

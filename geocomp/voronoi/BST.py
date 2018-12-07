@@ -46,8 +46,8 @@ class BST():
             print(f'p_1: ({i.x},{i.y})', f'p_j:({j.x}, {j.y})')
             x_breakpoints = get_x_breakpoints(node, point.y)
             print('point:', f'({point.x}, {point.y})')
-            d_pi0 = derivada_parabola(i, point.y, x_breakpoints[0])
-            d_pj0 = derivada_parabola(j, point.y, x_breakpoints[0])
+            d_pi0 = derivative_parable(i, point.y, x_breakpoints[0])
+            d_pj0 = derivative_parable(j, point.y, x_breakpoints[0])
 
             if d_pi0 < d_pj0:
                 x_breakpoint = x_breakpoints[1]
@@ -180,6 +180,8 @@ class BST():
             leaves += inner_all_leaves(node.left)
             leaves += inner_all_leaves(node.right)
             return leaves
+        if self.is_empty():
+            return []
         return inner_all_leaves(self.root)
 
     def _str_children(self, node):
@@ -202,22 +204,16 @@ class BST():
     def __str__(self):
         return self._str_children(self.root)
 
-def derivada_parabola(p, line_y, x_breakpoint):
+def derivative_parable(p, line_y, x_breakpoint):
+    if p.y == line_y:
+        return math.inf
     return (x_breakpoint - p.x)/(p.y - line_y)
 
 def get_x_breakpoints(node, line_y):
-    """ Calcula a coordenada x do breakpoint dado a tupla de pontos
+    """ Calcula as coordenadas x do breakpoint dado a tupla de pontos
     e a posição y da linha de varredura
     """
     i, j = node.p_i.point, node.p_j.point
-    # if i.y != line_y and j.y != line_y:
-    #     g = lambda h : lambda x : (x**2 - 2*h.x*x + h.x**2 + h.y**2- line_y**2)/(2*(h.y - line_y))
-    #     f_i, f_j = g(i), g(j)
-    #     points_i = [Point(x/50, f_i(x/50)) for x in range(-500, 500)]
-    #     points_j = [Point(x/50, f_j(x/50)) for x in range(-500, 500)]
-    #
-    #     for p in points_i: p.plot(color='cyan', radius=1)
-    #     for p in points_j: p.plot(color='yellow', radius=1)
 
     a = j.y - i.y
     b = 2 * (j.x*i.y - i.x*j.y + line_y * (i.x - j.x))
@@ -228,32 +224,22 @@ def get_x_breakpoints(node, line_y):
     delta = b**2 - 4*a*c
     if delta < 0:
         raise NameError('Negative discriminant')
-    elif delta != 0:
-        roots += [(-b + math.sqrt(delta))/(2*a)]
+    roots += [(-b + math.sqrt(delta))/(2*a)]
 
     roots += [(-b - math.sqrt(delta))/(2*a)]
-    # print(roots)
-    # i.hilight(color='cyan')
-    # j.hilight(color='yellow')
-    # id_1 = control.plot_vert_line(roots[0], color='blue')
-    # if len(roots) > 1:
-    #     id_2 = control.plot_vert_line(roots[1], color='red')
-    #
-    # control.sleep()
-    # control.update()
-    #
-    # control.plot_delete(id_1)
-    # if len(roots) > 1:
-    #     control.plot_delete(id_2)
-    # i.unhilight()
-    # j.unhilight()
-    # if i.y != line_y and j.y != line_y:
-    #     for p in points_i: p.unplot()
-    #     for p in points_j: p.unplot()
     print('roots:', roots)
     roots.sort()
     return roots
-    # if
-    # if len(roots) == 1 or i.x <= roots[0] <= j.x:
-    #     return roots[0]
-    # return roots[1]
+
+def choose_x_breakpoint(node, x_breakpoints, line_y):
+    """ Escolhe a coordenada x do breakpoint referente ao nó dado """
+    p_i, p_j = node.p_i.point, node.p_j.point
+    d_pi0 = derivative_parable(p_i, line_y, x_breakpoints[0])
+    d_pj0 = derivative_parable(p_j, line_y, x_breakpoints[0])
+
+    if d_pi0 < d_pj0:
+        return x_breakpoints[1]
+    elif d_pi0 > d_pj0:
+        return x_breakpoints[0]
+    else:
+        print('DEU IGUAL')
