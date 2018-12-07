@@ -13,16 +13,6 @@ class Point:
 		self.z = z
 		self.lineto_id = {}
 
-	################# ANDREW E EDUARDO MUDARAM ##############
-	def __lt__(self, other):
-		return self.y < other.y or (self.y == other.y and self.x > other.x)
-
-	def __gt__(self, other):
-		return self.y > other.y or (self.y == other.y and self.x < other.x)
-
-	def __str__(self):
-		return f'({self.x}, {self.y})'
-	######################### FIM ##########################
 	def plot (self, color=config.COLOR_POINT, radius=config.RADIUS):
 		"Desenha o ponto na cor especificada"
 		self.plot_id = control.plot_disc (self.x, self.y, color, radius)

@@ -7,7 +7,7 @@ from geocomp.common import control
 from geocomp.common.guiprim import *
 from queue import PriorityQueue
 from pqdict import pqdict
-from geocomp.common.point import Point
+from geocomp.voronoi.point import Point
 from geocomp.common.segment import Segment
 from geocomp.voronoi.DCEL import DCEL, Vertex, Hedge, Face
 from geocomp.voronoi.BST import BST, get_x_breakpoints, derivada_parabola
@@ -18,7 +18,7 @@ from geocomp import config
 FORTUNE_EPS = 1e-6
 
 class Event():
-	def __init__(self, point, is_site_event=None, leaf=None, center=None):
+	def __init__(self, point, is_site_event, leaf=None, center=None):
 		self.point = point
 		self.is_site_event = is_site_event
 		self.leaf = leaf
@@ -42,11 +42,13 @@ def final_unplot(par_plots, hedges):
 		h.segment.hide()
 
 def event_queue(P):
-	events = [Event(p, True) for p in P]
+	events = [Event(Point(p.x, p.y), True) for p in P]
+	print(events)
 	Q = pqdict({e : e.point for e in events}, reverse=True)
 	return Q
 
 def Fortune(P):
+	print(P)
 	Q = event_queue(P)
 	V = DCEL()
 	T = BST()

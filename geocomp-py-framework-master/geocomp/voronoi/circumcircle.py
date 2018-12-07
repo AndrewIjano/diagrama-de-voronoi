@@ -1,5 +1,5 @@
 import math
-from geocomp.common.point import Point
+from geocomp.voronoi.point import Point
 # import numpy as np
 
 from geocomp.common import control
@@ -38,6 +38,7 @@ def distance(p1, p2):
     return math.sqrt((p2.x - p1.x)**2 + (p2.y - p1.y)**2)
 
 def bissect_line_function(node):
+    """Retorna a função da linha bissetora representada pelo nó interno"""
     mid = mid_point(node.p_i.point, node.p_j.point)
     slope = perp_slope(get_line(node.p_i.point, node.p_j.point))
 

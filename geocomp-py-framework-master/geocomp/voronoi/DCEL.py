@@ -1,5 +1,5 @@
 from geocomp.common.segment import Segment
-from geocomp.common.point import Point
+from geocomp.voronoi.point import Point
 class Vertex():
     """Implementa um vértice 2D de uma DCEL"""
 

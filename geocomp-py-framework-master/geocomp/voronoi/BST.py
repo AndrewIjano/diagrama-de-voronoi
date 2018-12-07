@@ -1,5 +1,5 @@
 import math
-from geocomp.common.point import Point
+from geocomp.voronoi.point import Point
 from geocomp.common import control
 
 class Node():
