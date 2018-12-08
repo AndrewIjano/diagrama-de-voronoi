@@ -16,7 +16,7 @@ from geocomp.voronoi.circumcircle import *
 
 FORTUNE_EPS = 1e-6
 FORTUNE_INFINITY = 200
-FORTUNE_PLOT_RATE = 0.1
+FORTUNE_PLOT_RATE = 0.01
 
 class Event():
 	def __init__(self, point, is_site_event, leaf=None, center=None):
@@ -92,14 +92,15 @@ def Fortune(P):
 			next_y = Q.top().point.y
 			line_y = q.point.y
 			while not math.isclose(line_y, next_y, rel_tol=4*FORTUNE_PLOT_RATE):
+				control.freeze_update()
 				print(line_y, next_y)
 				line_y -= FORTUNE_PLOT_RATE
 				final_unplot(par_plots, V.hedges)
 				control.plot_delete(sweep)
-				control.update()
+				# control.thaw_update()
 				par_plots = final_plot(T.all_leaves(), V.hedges, line_y)
 				sweep = control.plot_horiz_line(line_y, color='green')
-				control.update()
+				control.thaw_update()
 				# control.sleep()
 
 		final_unplot(par_plots, V.hedges)
