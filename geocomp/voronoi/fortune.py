@@ -15,7 +15,7 @@ from geocomp.voronoi.DCEL import *
 from geocomp.voronoi.circumcircle import *
 
 FORTUNE_EPS = 1e-6
-FORTUNE_INFINITY = 200
+FORTUNE_INF = 200
 FORTUNE_PLOT_RATE = 0.01
 
 class Event():
@@ -29,25 +29,34 @@ class Event():
 		return f'({self.point.x}, {self.point.y})'
 
 
-def final_plot(leaves, hedges, line_y):
-	for h in hedges:
-		h.segment.plot(cor='blue')
+def final_plot(leaves, V, line_y):
 
 	par_plot = []
 	for leaf in leaves:
 		if leaf.pred is not None:
 			pred_breakpoints = get_x_breakpoints(leaf.pred, line_y)
 			startx = choose_x_breakpoint(leaf.pred, pred_breakpoints, line_y)
+
+			bissect_line = bissect_line_function(leaf.pred)
+			leaf.pred.hedge.update_origin(Point(startx, bissect_line(startx)))
 		else:
-			startx = -FORTUNE_INFINITY
+			startx = -FORTUNE_INF
+
 
 		if leaf.succ is not None:
 			succ_breakpoints = get_x_breakpoints(leaf.succ, line_y)
 			endx = choose_x_breakpoint(leaf.succ, succ_breakpoints, line_y)
+
+			bissect_line = bissect_line_function(leaf.succ)
+			leaf.succ.hedge.update_dest(Point(endx, bissect_line(endx)))
 		else:
-			endx = FORTUNE_INFINITY
+			endx = FORTUNE_INF
 
 		par_plot += [control.plot_parabola(line_y, leaf.point.x, leaf.point.y, startx, endx, steps=400)]
+
+	for h in V.hedges:
+		h.segment.plot(cor='blue')
+
 	return par_plot
 
 def final_unplot(par_plots, hedges):
@@ -72,7 +81,7 @@ def Fortune(P):
 
 		q = Q.pop()
 		q.point.hilight()
-		par_plots = final_plot(T.all_leaves(), V.hedges, q.point.y)
+		par_plots = final_plot(T.all_leaves(), V, q.point.y)
 		control.sleep()
 
 		sweep = control.plot_horiz_line(q.point.y, color='green')
@@ -98,7 +107,7 @@ def Fortune(P):
 				final_unplot(par_plots, V.hedges)
 				control.plot_delete(sweep)
 				# control.thaw_update()
-				par_plots = final_plot(T.all_leaves(), V.hedges, line_y)
+				par_plots = final_plot(T.all_leaves(), V, line_y)
 				sweep = control.plot_horiz_line(line_y, color='green')
 				control.thaw_update()
 				# control.sleep()
@@ -128,8 +137,8 @@ def handle_site_event(q, T, Q, V):
 		u, f, v = T.split_and_insert(f, q)
 
 		bissect_line = bissect_line_function(u)
-		v_1 = V.add_vertex(Point(-FORTUNE_INFINITY, bissect_line(-FORTUNE_INFINITY)))
-		v_2 = V.add_vertex(Point(FORTUNE_INFINITY, bissect_line(FORTUNE_INFINITY)))
+		v_1 = V.add_vertex(Point(-FORTUNE_INF, bissect_line(-FORTUNE_INF)))
+		v_2 = V.add_vertex(Point(FORTUNE_INF, bissect_line(FORTUNE_INF)))
 
 		h_12 = Hedge(v_1, v_2)
 		V.add_hedge(h_12)
@@ -162,11 +171,11 @@ def handle_circle_event(q, T, Q, V):
 	# print(q.center.x)
 	bissec_pred = bissect_line_function(pred)
 	if math.isclose(x_breakpoints[0], q.center.x, rel_tol=FORTUNE_EPS):
-		point_pred = Point(FORTUNE_INFINITY, bissec_pred(FORTUNE_INFINITY))
+		point_pred = Point(FORTUNE_INF, bissec_pred(FORTUNE_INF))
 	else:
-		point_pred = Point(-FORTUNE_INFINITY, bissec_pred(-FORTUNE_INFINITY))
+		point_pred = Point(-FORTUNE_INF, bissec_pred(-FORTUNE_INF))
 
-	if abs(pred.hedge.dest.p.x) == FORTUNE_INFINITY:
+	if abs(pred.hedge.dest.p.x) == FORTUNE_INF:
 		pred.hedge.update_dest(point_pred)
 
 
@@ -174,11 +183,11 @@ def handle_circle_event(q, T, Q, V):
 	x_breakpoints = get_x_breakpoints(succ, q.point.y)
 	bissec_succ = bissect_line_function(succ)
 	if math.isclose(x_breakpoints[0], q.center.x, rel_tol=FORTUNE_EPS):
-		point_succ = Point(FORTUNE_INFINITY, bissec_succ(FORTUNE_INFINITY))
+		point_succ = Point(FORTUNE_INF, bissec_succ(FORTUNE_INF))
 	else:
-		point_succ = Point(-FORTUNE_INFINITY, bissec_succ(-FORTUNE_INFINITY))
+		point_succ = Point(-FORTUNE_INF, bissec_succ(-FORTUNE_INF))
 
-	if abs(succ.hedge.dest.p.x) == FORTUNE_INFINITY:
+	if abs(succ.hedge.dest.p.x) == FORTUNE_INF:
 		succ.hedge.update_dest(point_succ)
 
 	mid1 = mid_point(left_leaf.point, right_leaf.point)
@@ -186,7 +195,7 @@ def handle_circle_event(q, T, Q, V):
 	# bissect_line = lambda x : slope1*x + mid1.y - mid1.x*slope1
 	bissect_line = lambda y : (y - mid1.y)/slope1 + mid1.x
 
-	v = V.add_vertex(Point(bissect_line(-FORTUNE_INFINITY), -FORTUNE_INFINITY))
+	v = V.add_vertex(Point(bissect_line(-FORTUNE_INF), -FORTUNE_INF))
 	h_vu = Hedge(v, u)
 	V.add_hedge(h_vu)
 	new_node.hedge = h_vu
