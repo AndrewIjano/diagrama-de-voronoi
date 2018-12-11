@@ -16,7 +16,7 @@ from geocomp.voronoi.circumcircle import *
 
 FORTUNE_EPS = 1e-6
 FORTUNE_INF = 200
-FORTUNE_PLOT_RATE = 0.01
+FORTUNE_PLOT_RATE = 0.05
 
 class Event():
 	def __init__(self, point, is_site_event, leaf=None, center=None):
@@ -29,7 +29,7 @@ class Event():
 		return f'({self.point.x}, {self.point.y})'
 
 
-def final_plot(leaves, V, line_y):
+def plot_all(leaves, V, line_y):
 
 	par_plot = []
 	for leaf in leaves:
@@ -46,20 +46,20 @@ def final_plot(leaves, V, line_y):
 		if leaf.succ is not None:
 			succ_breakpoints = get_x_breakpoints(leaf.succ, line_y)
 			endx = choose_x_breakpoint(leaf.succ, succ_breakpoints, line_y)
-
 			bissect_line = bissect_line_function(leaf.succ)
-			leaf.succ.hedge.update_dest(Point(endx, bissect_line(endx)))
+			leaf.succ.hedge.update_origin(Point(endx, bissect_line(endx)))
 		else:
 			endx = FORTUNE_INF
 
 		par_plot += [control.plot_parabola(line_y, leaf.point.x, leaf.point.y, startx, endx, steps=400)]
 
 	for h in V.hedges:
-		h.segment.plot(cor='blue')
+		h.segment.plot()
 
-	return par_plot
+	sweep = control.plot_horiz_line(line_y, color='green')
+	return par_plot, sweep
 
-def final_unplot(par_plots, hedges):
+def unplot_all(par_plots, hedges, sweep):
 	for par in par_plots:
 		control.plot_delete(par)
 
@@ -67,6 +67,8 @@ def final_unplot(par_plots, hedges):
 		if h.segment.lid is None:
 			continue
 		h.segment.hide()
+
+	control.plot_delete(sweep)
 
 def event_queue(P):
 	events = [Event(Point(p.x, p.y), True) for p in P]
@@ -78,13 +80,11 @@ def Fortune(P):
 	V = DCEL()
 	T = BST()
 	while Q:
-
 		q = Q.pop()
 		q.point.hilight()
-		par_plots = final_plot(T.all_leaves(), V, q.point.y)
+		par_plots, sweep = plot_all(T.all_leaves(), V, q.point.y)
 		control.sleep()
 
-		sweep = control.plot_horiz_line(q.point.y, color='green')
 		if q.is_site_event:
 			print(f'({q.point.x}, {q.point.y})', 'evento ponto')
 			handle_site_event(q.point, T, Q, V)
@@ -93,7 +93,6 @@ def Fortune(P):
 			handle_circle_event(q, T, Q, V)
 			q.point.unplot()
 
-		# print('Q:',Q)
 		print('T:', T)
 		print()
 		control.sleep()
@@ -102,23 +101,20 @@ def Fortune(P):
 			line_y = q.point.y
 			while not math.isclose(line_y, next_y, rel_tol=4*FORTUNE_PLOT_RATE):
 				control.freeze_update()
-				print(line_y, next_y)
 				line_y -= FORTUNE_PLOT_RATE
-				final_unplot(par_plots, V.hedges)
-				control.plot_delete(sweep)
-				# control.thaw_update()
-				par_plots = final_plot(T.all_leaves(), V, line_y)
-				sweep = control.plot_horiz_line(line_y, color='green')
-				control.thaw_update()
-				# control.sleep()
+				unplot_all(par_plots, V.hedges, sweep)
 
-		final_unplot(par_plots, V.hedges)
-		control.plot_delete(sweep)
+				par_plots, sweep = plot_all(T.all_leaves(), V, line_y)
+				control.sleep()
+
+		unplot_all(par_plots, V.hedges, sweep)
+
 		q.point.unhilight()
-
-		control.update()
 		print('----------------')
+		control.update()
 
+	for h in V.hedges:
+		h.segment.plot()
 	# finalize_voronoi(V, T)
 	print('fim do Voronoi')
 	return V
@@ -164,35 +160,12 @@ def handle_circle_event(q, T, Q, V):
 
 	u = V.add_vertex(q.center)
 
-
-	pred.hedge.update_origin(u)
-	x_breakpoints = get_x_breakpoints(pred, q.point.y)
-	# print(x_breakpoints)
-	# print(q.center.x)
-	bissec_pred = bissect_line_function(pred)
-	if math.isclose(x_breakpoints[0], q.center.x, rel_tol=FORTUNE_EPS):
-		point_pred = Point(FORTUNE_INF, bissec_pred(FORTUNE_INF))
-	else:
-		point_pred = Point(-FORTUNE_INF, bissec_pred(-FORTUNE_INF))
-
-	if abs(pred.hedge.dest.p.x) == FORTUNE_INF:
-		pred.hedge.update_dest(point_pred)
-
-
-	succ.hedge.update_origin(u)
-	x_breakpoints = get_x_breakpoints(succ, q.point.y)
-	bissec_succ = bissect_line_function(succ)
-	if math.isclose(x_breakpoints[0], q.center.x, rel_tol=FORTUNE_EPS):
-		point_succ = Point(FORTUNE_INF, bissec_succ(FORTUNE_INF))
-	else:
-		point_succ = Point(-FORTUNE_INF, bissec_succ(-FORTUNE_INF))
-
-	if abs(succ.hedge.dest.p.x) == FORTUNE_INF:
-		succ.hedge.update_dest(point_succ)
+	update_hedge(pred, q, u)
+	update_hedge(succ, q, u)
 
 	mid1 = mid_point(left_leaf.point, right_leaf.point)
 	slope1 = perp_slope(get_line(left_leaf.point, right_leaf.point))
-	# bissect_line = lambda x : slope1*x + mid1.y - mid1.x*slope1
+
 	bissect_line = lambda y : (y - mid1.y)/slope1 + mid1.x
 
 	v = V.add_vertex(Point(bissect_line(-FORTUNE_INF), -FORTUNE_INF))
@@ -202,9 +175,22 @@ def handle_circle_event(q, T, Q, V):
 
 	h_uv = Hedge(u, v)
 	V.add_hedge(h_uv)
-
+	
 	h_uv.add_twin(h_vu)
 
+def update_hedge(node, event, vertex):
+	node.hedge.update_origin(vertex)
+
+	x_breakpoints = get_x_breakpoints(node, event.point.y)
+	bissec = bissect_line_function(node)
+
+	if math.isclose(x_breakpoints[0], event.center.x, rel_tol=FORTUNE_EPS):
+		point = Point(FORTUNE_INF, bissec(FORTUNE_INF))
+	else:
+		point = Point(-FORTUNE_INF, bissec(-FORTUNE_INF))
+
+	if abs(node.hedge.dest.p.x) == FORTUNE_INF:
+		node.hedge.update_dest(point)
 
 def is_there_left_triple(leaf):
 	return leaf.pred is not None and leaf.pred.p_i.pred is not None
@@ -214,26 +200,49 @@ def is_there_right_triple(leaf):
 
 def update_events(Q, T, left_leaf, right_leaf, q):
 	if is_there_left_triple(right_leaf):
-		leaf2 = right_leaf.pred.p_i
-		leaf3 = leaf2.pred.p_i
+		node1 = right_leaf.pred
+		leaf2 = node1.p_i
+		node2 = leaf2.pred
+		leaf3 = node2.p_i
+		print('left:')
+		print(leaf2, leaf3)
 		if leaf2.event is None:
-			add_circle_event(right_leaf, leaf2, leaf3, q, Q)
+			add_circle_event(right_leaf, leaf2, leaf3, node1, node2, q, Q)
 
 	if is_there_right_triple(left_leaf):
-		leaf2 = left_leaf.succ.p_j
-		leaf3 = leaf2.succ.p_j
+		node1 = left_leaf.succ
+		leaf2 = node1.p_j
+		node2 = leaf2.succ
+		leaf3 = node2.p_j
+		print('right:')
+		print(leaf2, leaf3)
 		if leaf2.event is None:
-			add_circle_event(left_leaf, leaf2, leaf3, q, Q)
+			add_circle_event(left_leaf, leaf2, leaf3, node1, node2, q, Q)
 
-def add_circle_event(leaf1, leaf2, leaf3, q, Q):
+def is_valid_event(center, radius, q):
+	is_under_sweep = center.y - radius < q.y - FORTUNE_EPS
+	is_on_sweep = math.isclose(center.y - radius, q.y)
+	is_on_the_right = center.x - radius > q.x + FORTUNE_EPS
+
+	return is_under_sweep or (is_on_sweep and is_on_the_right)
+
+def is_divergent(node, center):
+	if node.p_i.point.y < node.p_j.point.y:
+		return node.p_i.point.x > center.x
+	else:
+		return node.p_j.point.x < center.x
+
+def add_circle_event(leaf1, leaf2, leaf3, node1, node2, q, Q):
 	p1, p2, p3 = leaf1.point, leaf2.point, leaf3.point
 	p2.hilight('yellow')
 	p3.hilight('yellow')
+
 	center = circumcenter(p1, p2, p3)
 	radius = distance(center, p1)
 	circle = control.plot_circle(center.x, center.y, 'blue', radius)
 
-	if center.y - radius < q.y - FORTUNE_EPS or ( math.isclose(center.y - radius, q.y) and center.x - radius > q.x + FORTUNE_EPS):
+	is_convergent = not(is_divergent(node1, center) and is_divergent(node2, center))
+	if is_valid_event(center, radius, q) and is_convergent:
 		point = Point(center.x, center.y - radius)
 		print('------ cria evento circulo: ', leaf2, f'({center.x}, {center.y})')
 		leaf2.event = Event(point, False, leaf2, center)

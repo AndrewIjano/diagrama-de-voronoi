@@ -14,7 +14,7 @@ class Vertex():
         return self.hedge
 
     def __str__(self):
-        return f'<Vertex, ({self.p.x},{self.p.y})>'
+        return '<V, ({:.2f},{:.2f})>'.format(self.p.x, self.p.y)
 
 class Hedge():
     """Implementa uma meia-aresta de uma DCEL"""
@@ -76,9 +76,9 @@ class Hedge():
     def __str__(self):
         return f'<Hedge, '               +\
                f'origin: {self.origin}, ' +\
-               f'twin: {self.twin}, '     +\
-               f'face: {self.face}, '     +\
-               f'next_hedge: {self.next_hedge}>'
+               f'dest: {self.dest}>'
+               # f'twin: {self.twin}, '     +\
+               # f'face: {self.face}, '     +\
 
 class Face():
     """Implementa uma face de uma DCEL"""

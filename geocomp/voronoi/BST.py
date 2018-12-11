@@ -42,25 +42,11 @@ class BST():
             if isinstance(node, Leaf):
                 return node
 
-            i, j = node.p_i.point, node.p_j.point
-            print(f'p_1: ({i.x},{i.y})', f'p_j:({j.x}, {j.y})')
-            x_breakpoints = get_x_breakpoints(node, point.y)
-            print('point:', f'({point.x}, {point.y})')
-            d_pi0 = derivative_parable(i, point.y, x_breakpoints[0])
-            d_pj0 = derivative_parable(j, point.y, x_breakpoints[0])
+            x_breakpoint = get_x_breakpoint(node, point.y)
 
-            if d_pi0 < d_pj0:
-                x_breakpoint = x_breakpoints[1]
-            elif d_pi0 > d_pj0:
-                x_breakpoint = x_breakpoints[0]
-            else:
-                print('DEU IGUAL')
-
-            print('x_breakpoint:', x_breakpoint)
+            # print('x_breakpoint:', x_breakpoint)
             if point.x < x_breakpoint:
-                print('LEFT')
                 return inner_search(node.left, point)
-            print('RIGHT')
             return inner_search(node.right, point)
 
         return inner_search(self.root, point)
@@ -132,7 +118,7 @@ class BST():
 
         def remove_circle_event(leaf, Q):
             if leaf.event is not None:
-                # print('remove event:', repr(leaf.event))
+                print('remove event:', str(leaf.event))
                 Q.updateitem(leaf.event, Point(math.inf, math.inf))
                 Q.pop()
                 leaf.event.point.unplot()
@@ -208,6 +194,10 @@ def derivative_parable(p, line_y, x_breakpoint):
     if p.y == line_y:
         return math.inf
     return (x_breakpoint - p.x)/(p.y - line_y)
+
+def get_x_breakpoint(node, line_y):
+    x_breakpoints = get_x_breakpoints(node, line_y)
+    return choose_x_breakpoint(node, x_breakpoints, line_y)
 
 def get_x_breakpoints(node, line_y):
     """ Calcula as coordenadas x do breakpoint dado a tupla de pontos
