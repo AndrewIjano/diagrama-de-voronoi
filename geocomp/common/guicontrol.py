@@ -20,7 +20,7 @@ def init_display (toolkit, master):
 def hide_all ():
 	"""Impede que mudancas sejas desenhadas, e passa a ignorar ordens para dormir
 
-	Como, em geral, um algoritmo leva mais tempo para desenhar 
+	Como, em geral, um algoritmo leva mais tempo para desenhar
 	na tela linhas/pontos/... do que para calcular o que ele precisa,
 	 interessante permitir que um algoritmo rode sem que ele mostre nenhuma
 	saida, apenas contando o numero de operacoes primitivas realizadas.
@@ -40,8 +40,8 @@ def unhide_all ():
 
 def config_canvas (pontos):
 	"""Configura o canvas para mostrar os pontos passados."""
-	
-	if len (pontos) == 0: 
+
+	if len (pontos) == 0:
 		return
 
 	minx = pontos[0].x
@@ -58,7 +58,7 @@ def config_canvas (pontos):
 			maxx = i.x
 		if i.y > maxy:
 			maxy = i.y
-	
+
 	if minx == maxx:
 		if minx == 0:
 			minx = -1
@@ -66,7 +66,7 @@ def config_canvas (pontos):
 		else:
 			minx = int (0.9 * minx)
 			maxx = int (1.1 * maxx)
-	
+
 	if miny == maxy:
 		if miny == 0:
 			miny = -1
@@ -86,8 +86,8 @@ def config_canvas (pontos):
 
 def run_algorithm (alg, input):
 	"""roda o algoritmo alg, usando input como entrada
-	
-	Retorna uma lista contendo o total de operacoes primitivas executadas 
+
+	Retorna uma lista contendo o total de operacoes primitivas executadas
 	e uma string opcionalmente retornada pelo algoritmo"""
 	config_canvas (input)
 
@@ -95,7 +95,7 @@ def run_algorithm (alg, input):
 	if gui.hide_algorithm ():
 		show = 0
 		hide_all ()
-	
+
 	input_dup = input[:]
 
 	ret = alg (input_dup)

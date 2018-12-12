@@ -15,15 +15,16 @@ from geocomp.voronoi.DCEL import *
 from geocomp.voronoi.circumcircle import *
 
 FORTUNE_EPS = 1e-6
-FORTUNE_INF = 200
-FORTUNE_PLOT_RATE = 0.05
-
+FORTUNE_INF = 300
+FORTUNE_PLOT_RATE = 0.03
+FORTUNE_STEPS = 400
 class Event():
-	def __init__(self, point, is_site_event, leaf=None, center=None):
+	def __init__(self, point, is_site_event, leaf=None, center=None, face=None):
 		self.point = point
 		self.is_site_event = is_site_event
 		self.leaf = leaf
 		self.center = center
+		self.face = face
 
 	def __str__(self):
 		return f'({self.point.x}, {self.point.y})'
@@ -51,7 +52,7 @@ def plot_all(leaves, V, line_y):
 		else:
 			endx = FORTUNE_INF
 
-		par_plot += [control.plot_parabola(line_y, leaf.point.x, leaf.point.y, startx, endx, steps=400)]
+		par_plot += [control.plot_parabola(line_y, leaf.point.x, leaf.point.y, startx, endx, steps=FORTUNE_STEPS)]
 
 	for h in V.hedges:
 		h.segment.plot()
@@ -71,9 +72,28 @@ def unplot_all(par_plots, hedges, sweep):
 	control.plot_delete(sweep)
 
 def event_queue(P):
-	events = [Event(Point(p.x, p.y), True) for p in P]
+	events = [Event(Point(p.x, p.y), True, face=Face()) for p in P]
 	Q = pqdict({e : e.point for e in events}, reverse=True)
 	return Q
+
+def find_borders(P):
+	if len(P) == 0:
+		return
+
+	minx = miny = math.inf
+	maxx = maxy = -math.inf
+
+	for point in P:
+		minx = min(point.x, minx)
+		miny = min(point.y, miny)
+		maxx = max(point.x, maxx)
+		maxy = max(point.y, maxy)
+
+	minx -= 0.2*int(abs(minx) + 1)
+	maxx += 0.2*int(abs(maxx) + 1)
+	miny -= 0.2*int(abs(miny) + 1)
+	maxy += 0.2*int(abs(maxy) + 1)
+	return (minx, maxx, miny, maxy)
 
 def Fortune(P):
 	Q = event_queue(P)
@@ -87,7 +107,7 @@ def Fortune(P):
 
 		if q.is_site_event:
 			print(f'({q.point.x}, {q.point.y})', 'evento ponto')
-			handle_site_event(q.point, T, Q, V)
+			handle_site_event(q, T, Q, V)
 		else:
 			print(f'({q.point.x}, {q.point.y})', 'evento circulo')
 			handle_circle_event(q, T, Q, V)
@@ -99,12 +119,13 @@ def Fortune(P):
 		if len(Q) > 0:
 			next_y = Q.top().point.y
 			line_y = q.point.y
+			leaves = T.all_leaves()
 			while not math.isclose(line_y, next_y, rel_tol=4*FORTUNE_PLOT_RATE):
 				control.freeze_update()
 				line_y -= FORTUNE_PLOT_RATE
 				unplot_all(par_plots, V.hedges, sweep)
 
-				par_plots, sweep = plot_all(T.all_leaves(), V, line_y)
+				par_plots, sweep = plot_all(leaves, V, line_y)
 				control.sleep()
 
 		unplot_all(par_plots, V.hedges, sweep)
@@ -112,41 +133,165 @@ def Fortune(P):
 		q.point.unhilight()
 		print('----------------')
 		control.update()
-
+	vertices = [v.p for v in V.vertices]
+	borders = find_borders(P + vertices)
+	finalize_voronoi(V, T, borders)
 	for h in V.hedges:
 		h.segment.plot()
-	# finalize_voronoi(V, T)
 	print('fim do Voronoi')
 	return V
+
+def finalize_voronoi(V, T, borders):
+	left = []
+	right = []
+	bottom = []
+	top = []
+	for n in T.all_nodes():
+		hedge = n.hedge
+		bissect_line = bissect_line_function(n)
+		if hedge.origin.x() < hedge.dest.x():
+			point_x = -FORTUNE_INF
+		else:
+			point_x = FORTUNE_INF
+		point = Point(point_x, bissect_line(point_x))
+		hedge.update_origin(point)
+		print(borders)
+		clip_hedge(hedge, borders)
+
+		if math.isclose(hedge.origin.x(), borders[0]):
+			left += [hedge.origin]
+		elif math.isclose(hedge.origin.x(), borders[1]):
+			right += [hedge.origin]
+		elif math.isclose(hedge.origin.y(), borders[2]):
+			bottom += [hedge.origin]
+		elif math.isclose(hedge.origin.y(), borders[3]):
+			top += [hedge.origin]
+
+		point.plot('red', 5)
+
+	v_lb = V.add_vertex(Point(borders[0], borders[2]))
+	v_rb = V.add_vertex(Point(borders[1], borders[2]))
+	v_lt = V.add_vertex(Point(borders[0], borders[3]))
+	v_rt = V.add_vertex(Point(borders[1], borders[3]))
+
+	outer_face = Face()
+	connect_edge(V, v_lb, v_rb, bottom, outer_face)
+	connect_edge(V, v_rb, v_rt, right, outer_face)
+	connect_edge(V, v_rt, v_lt, top, outer_face)
+	connect_edge(V, v_lt, v_lb, left, outer_face)
+
+def connect_edge(V, corner1, corner2, vertices, outer_face):
+	initial_v = corner1
+	previous_hedge = None
+	for v in vertices:
+		h1 = Hedge(initial_v, v)
+		V.add_hedge(h1)
+		if previous_hedge is not None:
+			previous_hedge.next_hedge = h1
+		h1.add_face(outer_face)
+
+		h2 = Hedge(v, initial_v)
+		V.add_hedge(h2)
+		h2.next_hedge = initial_v.hedge
+		h2.add_face(initial_v.hedge.face)
+
+		h1.add_twin(h2)
+
+		previous_hedge = h1
+		initial_v = v
+
+	h1 = Hedge(initial_v, corner2)
+	V.add_hedge(h1)
+	if previous_hedge is not None:
+		previous_hedge.next_hedge = h1
+	h1.add_face(outer_face)
+
+	h2 = Hedge(corner2, initial_v)
+	V.add_hedge(h2)
+	h2.next_hedge = initial_v.hedge
+	h2.add_face(initial_v.hedge.face)
+
+	h1.add_twin(h2)
+
+def clip_hedge(hedge, borders):
+	t0 = 0
+	t1 = 1
+	x_delta = hedge.dest.x() - hedge.origin.x()
+	y_delta = hedge.dest.y() - hedge.origin.y()
+
+	p_values = [x_delta, y_delta]
+	for i in range(4):
+		if i == 0:
+			p = -x_delta
+			q = -(borders[i] - hedge.origin.x())
+		elif i == 1:
+			p = x_delta
+			q = (borders[i] - hedge.origin.x())
+		elif i == 2:
+			p = -y_delta
+			q = -(borders[i] - hedge.origin.y())
+		elif i == 3:
+			p = y_delta
+			q = borders[i] - hedge.origin.y()
+
+		r = q/p
+
+		if p == 0 and q < 0:
+			return False
+
+		if p < 0:
+			if r > t1:
+				return False
+			elif r > t0:
+				t0 = r
+		elif p > 0:
+			if r < t0:
+				return False
+			elif r < t1:
+				t1 = r
+
+	x0_clip = hedge.origin.x() + t0 * x_delta
+	y0_clip = hedge.origin.y() + t0 * y_delta
+	x1_clip = hedge.origin.x() + t1 * x_delta
+	y1_clip = hedge.origin.y() + t1 * y_delta
+
+	hedge.update_origin(Point(x0_clip, y0_clip))
+	hedge.update_dest(Point(x1_clip, y1_clip))
+
+	return True
 
 def handle_site_event(q, T, Q, V):
 	if T.is_empty():
 		T.insert(q)
 	else:
-		f = T.search(q)
+		f = T.search(q.point)
 		if f.event is not None:
 			f.event.point.unplot()
 			Q.updateitem(f.event, Point(math.inf, math.inf))
 			Q.pop()
 			f.event = None
 
+		print(q.face)
 		u, f, v = T.split_and_insert(f, q)
 
 		bissect_line = bissect_line_function(u)
-		v_1 = V.add_vertex(Point(-FORTUNE_INF, bissect_line(-FORTUNE_INF)))
-		v_2 = V.add_vertex(Point(FORTUNE_INF, bissect_line(FORTUNE_INF)))
+		v_1 = V.add_vertex(Point(None, None))
+		v_2 = V.add_vertex(Point(None, None))
 
 		h_12 = Hedge(v_1, v_2)
 		V.add_hedge(h_12)
 		u.hedge = h_12
-
+		print('aaaaaa')
+		h_12.add_face(u.p_j.face)
+		print('bbbbbb')
 		h_21 = Hedge(v_2, v_1)
 		V.add_hedge(h_21)
 		v.hedge = h_21
+		h_21.add_face(v.p_j.face)
 
 		h_12.add_twin(h_21)
 
-		update_events(Q, T, f, f, q)
+		update_events(Q, T, f, f, q.point)
 
 
 def handle_circle_event(q, T, Q, V):
@@ -162,21 +307,27 @@ def handle_circle_event(q, T, Q, V):
 
 	update_hedge(pred, q, u)
 	update_hedge(succ, q, u)
+	succ.hedge.twin.next_hedge = pred.hedge
+	q.center.plot('red', 5)
 
 	mid1 = mid_point(left_leaf.point, right_leaf.point)
 	slope1 = perp_slope(get_line(left_leaf.point, right_leaf.point))
 
 	bissect_line = lambda y : (y - mid1.y)/slope1 + mid1.x
-
 	v = V.add_vertex(Point(bissect_line(-FORTUNE_INF), -FORTUNE_INF))
 	h_vu = Hedge(v, u)
 	V.add_hedge(h_vu)
 	new_node.hedge = h_vu
+	h_vu.add_face(new_node.p_i.face)
 
 	h_uv = Hedge(u, v)
 	V.add_hedge(h_uv)
-	
+	h_uv.add_face(new_node.p_j.face)
+
 	h_uv.add_twin(h_vu)
+
+	pred.hedge.twin.next_hedge = h_uv
+	h_vu.next_hedge = succ.hedge
 
 def update_hedge(node, event, vertex):
 	node.hedge.update_origin(vertex)

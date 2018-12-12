@@ -10,6 +10,12 @@ class Vertex():
     def add_hedge(self, hedge):
         self.hedge = hedge
 
+    def x(self):
+        return self.p.x
+
+    def y(self):
+        return self.p.y
+
     def hedge(self):
         return self.hedge
 
@@ -27,6 +33,8 @@ class Hedge():
         self.next_hedge = None
         self.segment = Segment(u.p, v.p)
         self.segment.lid = None
+
+        u.hedge = self
 
     def previous_hedge(self):
         return self.twin.next_hedge
@@ -49,6 +57,7 @@ class Hedge():
 
     def add_face(self, face):
         self.face = face
+        face.hedge = self
 
     def add_next_hedge(self, hedge):
         self.next_hedge = hedge
@@ -106,7 +115,6 @@ class DCEL():
     def add_vertex(self, vertex):
         if isinstance(vertex, Point):
             vertex = Vertex(vertex)
-        vertex.p.plot('red', 5)
         self.vertices.append(vertex)
         return vertex
 

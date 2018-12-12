@@ -14,11 +14,12 @@ class Node():
 
 class Leaf():
     """Implementa uma folha"""
-    def __init__(self, point, pred=None, succ=None):
+    def __init__(self, point, pred=None, succ=None, face=None):
         self.point = point
         self.event = None
         self.pred = pred
         self.succ = succ
+        self.face = face
 
     def __repr__(self):
         return f'<Leaf: ({int(self.point.x)}, {int(self.point.y)})>'
@@ -32,9 +33,9 @@ class BST():
     def is_empty(self):
         return self.root is None
 
-    def insert(self, point):
+    def insert(self, event):
         """Insere um arco em uma árvore vazia"""
-        self.root = Leaf(point)
+        self.root = Leaf(event.point, face=event.face)
 
     def search(self, point):
         """Busca a folha do arco acima do ponto"""
@@ -51,7 +52,7 @@ class BST():
 
         return inner_search(self.root, point)
 
-    def split_and_insert(self, leaf, point):
+    def split_and_insert(self, leaf, event):
         """Substitui a folha da árvore pela subárvore com três folhas:
 
             leaf   =>    new_tree
@@ -60,6 +61,8 @@ class BST():
                                  /       \\
                                new_leaf  right_split
         """
+        point = event.point
+
         new_leaf = Leaf(point)
         left_split = Leaf(leaf.point)
         right_split = Leaf(leaf.point)
@@ -93,6 +96,9 @@ class BST():
             # print('root')
             self.root = new_tree
 
+        left_split.face = right_split.face = leaf.face
+        new_leaf.face = event.face
+        # print(left_split.face, right_split.face, leaf.face, new_leaf.face, event.face)
         return new_tree, new_leaf, new_node
 
     def remove(self, leaf, Q):
@@ -156,6 +162,19 @@ class BST():
         remove_circle_event(succ.p_j, Q)
 
         return pred, succ, new_node
+    def all_nodes(self):
+        """Retorna todos os nós internos da árvore em pré-ordem"""
+        def inner_all_nodes(node):
+            if isinstance(node, Leaf):
+                return []
+
+            nodes = [node]
+            nodes += inner_all_nodes(node.left)
+            nodes += inner_all_nodes(node.right)
+            return nodes
+        if self.is_empty():
+            return []
+        return inner_all_nodes(self.root)
 
     def all_leaves(self):
         """Retorna todas as folhas da árvore em ordem crescente"""
