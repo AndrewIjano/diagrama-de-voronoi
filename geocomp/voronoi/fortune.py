@@ -99,6 +99,10 @@ def Fortune(P):
 	Q = event_queue(P)
 	V = DCEL()
 	T = BST()
+
+	for event in Q.keys():
+		V.add_face(event.face)
+
 	while Q:
 		q = Q.pop()
 		q.point.hilight()
@@ -113,7 +117,7 @@ def Fortune(P):
 			handle_circle_event(q, T, Q, V)
 			q.point.unplot()
 
-		print('T:', T)
+		# print('T:', T)
 		print()
 		control.sleep()
 		if len(Q) > 0:
@@ -138,8 +142,20 @@ def Fortune(P):
 	finalize_voronoi(V, T, borders)
 	for h in V.hedges:
 		h.segment.plot()
+	print('ttfygiuytfydrtxdyftufyiuhvg')
+	# for face in V.faces:
+	# 	print('>>', face)
+	# 	print_all_hedges(face)
 	print('fim do Voronoi')
 	return V
+
+def print_all_hedges(face):
+	hedge = face.hedge
+	initial_hedge = hedge
+	print(hedge)
+	while hedge.next_hedge is not initial_hedge:
+		hedge = hedge.next_hedge
+		print(hedge)
 
 def finalize_voronoi(V, T, borders):
 	left = []
@@ -169,18 +185,43 @@ def finalize_voronoi(V, T, borders):
 
 		point.plot('red', 5)
 
+	get_x = lambda point : point.x()
+	get_y = lambda point : point.y()
+	left.sort(key=get_y, reverse=True)
+	right.sort(key=get_y)
+	bottom.sort(key=get_x)
+	top.sort(key=get_x, reverse=True)
+
 	v_lb = V.add_vertex(Point(borders[0], borders[2]))
 	v_rb = V.add_vertex(Point(borders[1], borders[2]))
 	v_lt = V.add_vertex(Point(borders[0], borders[3]))
 	v_rt = V.add_vertex(Point(borders[1], borders[3]))
 
 	outer_face = Face()
-	connect_edge(V, v_lb, v_rb, bottom, outer_face)
-	connect_edge(V, v_rb, v_rt, right, outer_face)
-	connect_edge(V, v_rt, v_lt, top, outer_face)
-	connect_edge(V, v_lt, v_lb, left, outer_face)
+	V.add_face(outer_face)
+	h_b1, h_b2 = connect_edge(V, v_lb, v_rb, bottom, outer_face)
+	h_r1, h_r2 = connect_edge(V, v_rb, v_rt, right, outer_face)
+	h_t1, h_t2 = connect_edge(V, v_rt, v_lt, top, outer_face)
+	h_l1, h_l2 = connect_edge(V, v_lt, v_lb, left, outer_face)
+
+	h_b1.twin.next_hedge = h_l2.twin
+	h_b1.add_face(h_l2.twin.face)
+	h_b2.next_hedge = h_r1
+
+	h_r1.twin.next_hedge = h_b2.twin
+	h_r1.add_face(h_b2.twin.face)
+	h_r2.next_hedge = h_t1
+
+	h_t1.twin.next_hedge = h_r2.twin
+	h_t1.add_face(h_r2.twin.face)
+	h_t2.next_hedge = h_l1
+
+	h_l1.twin.next_hedge = h_t2.twin
+	h_l1.twin.add_face(h_t2.twin.face)
+	h_l2.next_hedge = h_b1
 
 def connect_edge(V, corner1, corner2, vertices, outer_face):
+	print('connect', corner1)
 	initial_v = corner1
 	previous_hedge = None
 	for v in vertices:
@@ -188,30 +229,39 @@ def connect_edge(V, corner1, corner2, vertices, outer_face):
 		V.add_hedge(h1)
 		if previous_hedge is not None:
 			previous_hedge.next_hedge = h1
+			print('p: ', previous_hedge, h1)
 		h1.add_face(outer_face)
 
+		inner_hedge = v.hedge
 		h2 = Hedge(v, initial_v)
 		V.add_hedge(h2)
-		h2.next_hedge = initial_v.hedge
-		h2.add_face(initial_v.hedge.face)
-
+		if previous_hedge is not None:
+			h2.next_hedge = initial_v.hedge
+			h2.add_face(initial_v.hedge.face)
+			print('twin:', h2, initial_v.hedge)
+		inner_hedge.twin.next_hedge = h2
+		print('inner:', inner_hedge, h2)
 		h1.add_twin(h2)
-
+		print()
 		previous_hedge = h1
 		initial_v = v
-
 	h1 = Hedge(initial_v, corner2)
 	V.add_hedge(h1)
 	if previous_hedge is not None:
 		previous_hedge.next_hedge = h1
+		print('p: ', previous_hedge, h1)
 	h1.add_face(outer_face)
 
 	h2 = Hedge(corner2, initial_v)
 	V.add_hedge(h2)
-	h2.next_hedge = initial_v.hedge
-	h2.add_face(initial_v.hedge.face)
-
+	if previous_hedge is not None:
+		h2.next_hedge = initial_v.hedge
+		print('twin:', h2, initial_v.hedge)
+		h2.add_face(initial_v.hedge.face)
 	h1.add_twin(h2)
+
+
+	return corner1.hedge, h1
 
 def clip_hedge(hedge, borders):
 	t0 = 0
@@ -281,9 +331,7 @@ def handle_site_event(q, T, Q, V):
 		h_12 = Hedge(v_1, v_2)
 		V.add_hedge(h_12)
 		u.hedge = h_12
-		print('aaaaaa')
 		h_12.add_face(u.p_j.face)
-		print('bbbbbb')
 		h_21 = Hedge(v_2, v_1)
 		V.add_hedge(h_21)
 		v.hedge = h_21
@@ -308,6 +356,7 @@ def handle_circle_event(q, T, Q, V):
 	update_hedge(pred, q, u)
 	update_hedge(succ, q, u)
 	succ.hedge.twin.next_hedge = pred.hedge
+	print('C#####', succ.hedge.twin, pred.hedge)
 	q.center.plot('red', 5)
 
 	mid1 = mid_point(left_leaf.point, right_leaf.point)
@@ -318,16 +367,18 @@ def handle_circle_event(q, T, Q, V):
 	h_vu = Hedge(v, u)
 	V.add_hedge(h_vu)
 	new_node.hedge = h_vu
-	h_vu.add_face(new_node.p_i.face)
+	h_vu.add_face(new_node.p_j.face)
 
 	h_uv = Hedge(u, v)
 	V.add_hedge(h_uv)
-	h_uv.add_face(new_node.p_j.face)
+	h_uv.add_face(new_node.p_i.face)
 
 	h_uv.add_twin(h_vu)
 
 	pred.hedge.twin.next_hedge = h_uv
+	print('E######', pred.hedge.twin, pred.hedge.twin.next_hedge)
 	h_vu.next_hedge = succ.hedge
+	print('D######', h_vu, succ.hedge)
 
 def update_hedge(node, event, vertex):
 	node.hedge.update_origin(vertex)
