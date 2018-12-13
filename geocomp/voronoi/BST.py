@@ -44,8 +44,6 @@ class BST():
                 return node
 
             x_breakpoint = get_x_breakpoint(node, point.y)
-
-            # print('x_breakpoint:', x_breakpoint)
             if point.x < x_breakpoint:
                 return inner_search(node.left, point)
             return inner_search(node.right, point)
@@ -84,21 +82,16 @@ class BST():
             leaf.succ.p_i = right_split
 
         if leaf.pred is not None and leaf.pred.right == leaf:
-            # print('right')
             new_tree.father = leaf.pred
             leaf.pred.right = new_tree
         elif leaf.succ is not None:
-            # print('left')
-            # print('split_and_insert: L_left:', new_tree.left, new_tree.left.pred, new_tree.left.succ)
             new_tree.father = leaf.succ
             leaf.succ.left = new_tree
         else:
-            # print('root')
             self.root = new_tree
 
         left_split.face = right_split.face = leaf.face
         new_leaf.face = event.face
-        # print(left_split.face, right_split.face, leaf.face, new_leaf.face, event.face)
         return new_tree, new_leaf, new_node
 
     def remove(self, leaf, Q):
@@ -124,7 +117,6 @@ class BST():
 
         def remove_circle_event(leaf, Q):
             if leaf.event is not None:
-                print('remove event:', str(leaf.event))
                 Q.updateitem(leaf.event, Point(math.inf, math.inf))
                 Q.pop()
                 leaf.event.point.unplot()
@@ -162,6 +154,7 @@ class BST():
         remove_circle_event(succ.p_j, Q)
 
         return pred, succ, new_node
+
     def all_nodes(self):
         """Retorna todos os nós internos da árvore em pré-ordem"""
         def inner_all_nodes(node):
@@ -197,11 +190,8 @@ class BST():
             n = queue.pop(0)
             string += repr(n)
             if isinstance(n, Node):
-                # string += '\t\t=> father: ' + repr(n.father)
                 queue.append(n.left)
                 queue.append(n.right)
-            # else:
-                # string += '\t\t=> pred: ' + repr(n.pred) + ' succ: ' + repr(n.succ)
             string += '\n'
             count += 1
         return string
@@ -229,16 +219,11 @@ def get_x_breakpoints(node, line_y):
     c = (j.y - line_y) * (i.x**2 + i.y**2 - line_y**2)\
         - (j.x**2 + j.y**2 - line_y**2) * (i.y - line_y)
 
-    roots = []
     delta = b**2 - 4*a*c
     if delta < 0:
-        raise NameError('Negative discriminant')
-    roots += [(-b + math.sqrt(delta))/(2*a)]
-
-    roots += [(-b - math.sqrt(delta))/(2*a)]
-    # print('roots:', roots)
-    roots.sort()
-    return roots
+        raise ValueError('Negative discriminant')
+    roots = [(-b + math.sqrt(delta))/(2*a), (-b - math.sqrt(delta))/(2*a)]
+    return sorted(roots)
 
 def choose_x_breakpoint(node, x_breakpoints, line_y):
     """ Escolhe a coordenada x do breakpoint referente ao nó dado """
@@ -251,4 +236,4 @@ def choose_x_breakpoint(node, x_breakpoints, line_y):
     elif d_pi0 > d_pj0:
         return x_breakpoints[0]
     else:
-        print('DEU IGUAL')
+        raise ValueError('Same derivative parabolas')

@@ -86,8 +86,6 @@ class Hedge():
         return f'<Hedge, '               +\
                f'origin: {self.origin}, ' +\
                f'dest: {self.dest}>'
-               # f'twin: {self.twin}, '     +\
-               # f'face: {self.face}, '     +\
 
 class Face():
     """Implementa uma face de uma DCEL"""
@@ -129,16 +127,3 @@ class DCEL():
                 '\n  vertices: ' + ', '.join([str(v) for v in self.vertices]) +\
                 '\n  hedges: '   + ', '.join([str(h) for h in self.hedges])   +\
                 '\n  faces: '    + ', '.join([str(f) for f in self.faces]) + '\n  >'
-
-
-if __name__=='__main__':
-    v = Vertex(2,3)
-    u = Vertex(4, 5)
-    h = Hedge(v, u)
-    f = Face()
-    dcel = DCEL()
-    dcel.add_vertex(v)
-    dcel.add_vertex(u)
-    dcel.add_hedge(h)
-    dcel.add_face(f)
-    print(dcel)

@@ -13,7 +13,7 @@ def rand_n_vertices (num_pts, num_vertices, radius):
 
 	if num_vertices > num_pts:
 		num_vertices, num_pts = num_pts, num_vertices
-	
+
 	l1 = randdisc.randdisc (num_pts - num_vertices, 0.7*radius)
 	l2 = randcirc.randcirc (num_vertices, radius)
 
@@ -27,7 +27,7 @@ if __name__ == '__main__':
 
 	if len (sys.argv) < 3:
 		print sys.argv[0],'<num_pts> <num_vertices> [radius]'
-		print '"radius" é multiplicado internamente por 0.7'
+		print '"radius"  multiplicado internamente por 0.7'
 		sys.exit (1)
 
 	num_pts = int (sys.argv[1])

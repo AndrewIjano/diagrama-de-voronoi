@@ -421,6 +421,7 @@ def add_circle_event(leaf1, leaf2, leaf3, node1, node2, q, Q):
 
 	center = circumcenter(p1, p2, p3)
 	radius = distance(center, p1)
+	circle = control.plot_circle(center.x, center.y, 'blue', radius)
 
 	is_convergent = not(is_divergent(node1, center) and is_divergent(node2, center))
 	if is_valid_event(center, radius, q) and is_convergent:
@@ -430,5 +431,6 @@ def add_circle_event(leaf1, leaf2, leaf3, node1, node2, q, Q):
 		point.plot(color='cyan')
 
 	control.sleep()
+	control.plot_delete(circle)
 	p2.unhilight()
 	p3.unhilight()

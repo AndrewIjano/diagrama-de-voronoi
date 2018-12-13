@@ -8,12 +8,13 @@ Algoritmos disponiveis:
 - Algoritmo de Fortune
 """
 
-from . import fortune
+from . import fortune, fortune_complete
 
 # cada entrada deve ter:
 #  [ 'nome-do-modulo', 'nome-da-funcao', 'nome do algoritmo' ]
 children = [
-	[ 'fortune', 'Fortune', 'Fortune' ]
+	[ 'fortune', 'Fortune', 'Fortune minimal' ],
+	[ 'fortune_complete', 'Fortune', 'Fortune completo']
 ]
 
 #children = algorithms
