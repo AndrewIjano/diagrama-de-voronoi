@@ -142,10 +142,10 @@ def Fortune(P):
 	finalize_voronoi(V, T, borders)
 	for h in V.hedges:
 		h.segment.plot()
-	print('ttfygiuytfydrtxdyftufyiuhvg')
-	# for face in V.faces:
-	# 	print('>>', face)
-	# 	print_all_hedges(face)
+	print('IMPRIME FACES')
+	for face in V.faces:
+		print('>>', face)
+		print_all_hedges(face)
 	print('fim do Voronoi')
 	return V
 
@@ -204,60 +204,60 @@ def finalize_voronoi(V, T, borders):
 	h_t1, h_t2 = connect_edge(V, v_rt, v_lt, top, outer_face)
 	h_l1, h_l2 = connect_edge(V, v_lt, v_lb, left, outer_face)
 
-	h_b1.twin.next_hedge = h_l2.twin
-	h_b1.add_face(h_l2.twin.face)
-	h_b2.next_hedge = h_r1
+	# print(left,'\n' ,right,'\n', bottom, '\n',top)
+	connect_corner(h_b1, h_b2, h_l2, h_r1)
+	connect_corner(h_r1, h_r2, h_b2, h_t1)
+	connect_corner(h_t1, h_t2, h_r2, h_l1)
+	connect_corner(h_l1, h_l2, h_t2, h_b1)
 
-	h_r1.twin.next_hedge = h_b2.twin
-	h_r1.add_face(h_b2.twin.face)
-	h_r2.next_hedge = h_t1
-
-	h_t1.twin.next_hedge = h_r2.twin
-	h_t1.add_face(h_r2.twin.face)
-	h_t2.next_hedge = h_l1
-
-	h_l1.twin.next_hedge = h_t2.twin
-	h_l1.twin.add_face(h_t2.twin.face)
-	h_l2.next_hedge = h_b1
+def connect_corner(corner_hedge1, corner_hedge2, prev_hedge, next_hedge):
+	corner_hedge1.twin.next_hedge = prev_hedge.twin
+	corner_hedge1.add_face(prev_hedge.twin.face)
+	corner_hedge2.next_hedge = next_hedge
 
 def connect_edge(V, corner1, corner2, vertices, outer_face):
 	print('connect', corner1)
-	initial_v = corner1
+	previous_v = corner1
+	previous_v_hedge = previous_v.hedge
 	previous_hedge = None
 	for v in vertices:
-		h1 = Hedge(initial_v, v)
+		h1 = Hedge(previous_v, v)
 		V.add_hedge(h1)
 		if previous_hedge is not None:
 			previous_hedge.next_hedge = h1
-			print('p: ', previous_hedge, h1)
+			# print('p: ', previous_hedge, h1)
 		h1.add_face(outer_face)
+		print('outer_face:', h1)
 
 		inner_hedge = v.hedge
-		h2 = Hedge(v, initial_v)
+		h2 = Hedge(v, previous_v)
 		V.add_hedge(h2)
 		if previous_hedge is not None:
-			h2.next_hedge = initial_v.hedge
-			h2.add_face(initial_v.hedge.face)
-			print('twin:', h2, initial_v.hedge)
+			h2.next_hedge = previous_v_hedge
+			h2.add_face(previous_v_hedge.face)
+			# print('twin:', h2, previous_v_hedge)
 		inner_hedge.twin.next_hedge = h2
-		print('inner:', inner_hedge, h2)
+		# print('inner:', inner_hedge.twin, h2)
 		h1.add_twin(h2)
 		print()
 		previous_hedge = h1
-		initial_v = v
-	h1 = Hedge(initial_v, corner2)
+		previous_v = v
+		previous_v_hedge = inner_hedge
+	# previous_v_hedge = previous_v.hedge
+	h1 = Hedge(previous_v, corner2)
 	V.add_hedge(h1)
 	if previous_hedge is not None:
 		previous_hedge.next_hedge = h1
-		print('p: ', previous_hedge, h1)
+		# print('p: ', previous_hedge, h1)
 	h1.add_face(outer_face)
+	print('outer_face', h1)
 
-	h2 = Hedge(corner2, initial_v)
+	h2 = Hedge(corner2, previous_v)
 	V.add_hedge(h2)
 	if previous_hedge is not None:
-		h2.next_hedge = initial_v.hedge
-		print('twin:', h2, initial_v.hedge)
-		h2.add_face(initial_v.hedge.face)
+		h2.next_hedge = previous_v_hedge
+		# print('twin:', h2, previous_v_hedge)
+		h2.add_face(previous_v.hedge.face)
 	h1.add_twin(h2)
 
 
@@ -356,7 +356,7 @@ def handle_circle_event(q, T, Q, V):
 	update_hedge(pred, q, u)
 	update_hedge(succ, q, u)
 	succ.hedge.twin.next_hedge = pred.hedge
-	print('C#####', succ.hedge.twin, pred.hedge)
+	# print('C#####', succ.hedge.twin, pred.hedge)
 	q.center.plot('red', 5)
 
 	mid1 = mid_point(left_leaf.point, right_leaf.point)
@@ -376,9 +376,9 @@ def handle_circle_event(q, T, Q, V):
 	h_uv.add_twin(h_vu)
 
 	pred.hedge.twin.next_hedge = h_uv
-	print('E######', pred.hedge.twin, pred.hedge.twin.next_hedge)
+	# print('E######', pred.hedge.twin, pred.hedge.twin.next_hedge)
 	h_vu.next_hedge = succ.hedge
-	print('D######', h_vu, succ.hedge)
+	# print('D######', h_vu, succ.hedge)
 
 def update_hedge(node, event, vertex):
 	node.hedge.update_origin(vertex)
@@ -406,8 +406,8 @@ def update_events(Q, T, left_leaf, right_leaf, q):
 		leaf2 = node1.p_i
 		node2 = leaf2.pred
 		leaf3 = node2.p_i
-		print('left:')
-		print(leaf2, leaf3)
+		# print('left:')
+		# print(leaf2, leaf3)
 		if leaf2.event is None:
 			add_circle_event(right_leaf, leaf2, leaf3, node1, node2, q, Q)
 
@@ -416,8 +416,8 @@ def update_events(Q, T, left_leaf, right_leaf, q):
 		leaf2 = node1.p_j
 		node2 = leaf2.succ
 		leaf3 = node2.p_j
-		print('right:')
-		print(leaf2, leaf3)
+		# print('right:')
+		# print(leaf2, leaf3)
 		if leaf2.event is None:
 			add_circle_event(left_leaf, leaf2, leaf3, node1, node2, q, Q)
 
@@ -446,7 +446,7 @@ def add_circle_event(leaf1, leaf2, leaf3, node1, node2, q, Q):
 	is_convergent = not(is_divergent(node1, center) and is_divergent(node2, center))
 	if is_valid_event(center, radius, q) and is_convergent:
 		point = Point(center.x, center.y - radius)
-		print('------ cria evento circulo: ', leaf2, f'({center.x}, {center.y})')
+		# print('------ cria evento circulo: ', leaf2, f'({center.x}, {center.y})')
 		leaf2.event = Event(point, False, leaf2, center)
 		Q.additem(leaf2.event, point)
 		point.plot(color='cyan')
