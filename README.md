@@ -1,4 +1,4 @@
-# Voronoi Diagram
+# :diamonds: Voronoi Diagram
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
 
 Implements a interactive version of Fortune Algorithm to create a Voronoi diagram.
@@ -24,4 +24,4 @@ Choose the dataset in the dropdown list `Arquivo` and click in `Diagrama de Voro
 
 ## Example
 
-![](voronoi-example.mp4)
+![](voronoi-example.png)
