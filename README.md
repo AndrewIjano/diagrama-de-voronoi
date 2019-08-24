@@ -1,6 +1,8 @@
 # :diamonds: Voronoi Diagram
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
 
+<img src="voronoi-picture.png" width=500>
+
 Implements a interactive version of Fortune Algorithm to create a Voronoi diagram.
 
 Project for subject MAC0331 (computacional geometry) at IME.
@@ -9,7 +11,7 @@ The [framework](https://gitlab.com/visportella/geocomp-py-framework) used was de
 
 ## Requirements
 
-- pqdict
+### pqdict
 ```
 $ pip3 install pqdict
 ```
@@ -24,4 +26,5 @@ Choose the dataset in the dropdown list `Arquivo` and click in `Diagrama de Voro
 
 ## Example
 
-![](voronoi-example.png)
+<img src="voronoi-example.png" width=500>
+
